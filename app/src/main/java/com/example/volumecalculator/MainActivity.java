@@ -3,9 +3,10 @@ package com.example.volumecalculator;
 import android.hardware.Camera;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.FrameLayout;
-import android.widget.Spinner;
-import android.widget.ArrayAdapter;
+import android.widget.*;
+import android.view.*;
+import android.graphics.*;
+import android.media.*;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -13,6 +14,7 @@ public class MainActivity extends AppCompatActivity {
     Camera camera;
     FrameLayout frameLayout;
     ShowCamera showCamera;
+    int current = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,5 +39,34 @@ public class MainActivity extends AppCompatActivity {
         dropdown.setAdapter(adapter);
 
 
+    }
+
+    Camera.PictureCallback mPictureCallback = new Camera.PictureCallback() {
+        @Override
+        public void onPictureTaken(byte[] data, Camera camera) {
+
+
+            ImageView firstPhoto = (ImageView) findViewById(R.id.img1);
+            ImageView secondPhoto = (ImageView) findViewById(R.id.img2);
+
+            Bitmap capturedImage = BitmapFactory.decodeByteArray(data, 0, data.length);
+
+            if (current == 1) {
+                firstPhoto.setImageBitmap(capturedImage);
+                current = 2;
+            } else {
+                secondPhoto.setImageBitmap(capturedImage);
+                current = 1;
+            }
+
+
+        }
+
+    };
+
+    public void captureImage(View v){
+        if (camera != null) {
+            camera.takePicture(null, null, mPictureCallback);
+        }
     }
 }
