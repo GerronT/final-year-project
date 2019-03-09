@@ -11,21 +11,57 @@ import android.media.*;
 
 public class MainActivity extends AppCompatActivity {
 
-    Camera camera;
-    FrameLayout frameLayout;
-    ShowCamera showCamera;
+    private Camera camera;
+    private FrameLayout frameLayout;
+    private ShowCamera showCamera;
+    private Accelerometer accelerometer;
+    private Gyroscope gyroscope;
+
+    private EditText accel;
+    private EditText gyro;
     int current = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        frameLayout = (FrameLayout) findViewById(R.id.frameLayout);
+        accelerometer = new Accelerometer(this);
+        gyroscope = new Gyroscope(this);
 
+        accel = findViewById(R.id.accel);
+        gyro = findViewById(R.id.gyro);
+
+        accelerometer.setListener(new Accelerometer.Listener() {
+            @Override
+            public void onTranslation(float tx, float ty, float tz) {
+                accel.setText("T - x: " + tx + ", y: " + ty + ", z: " + tz);
+                if (tx > 1.0f) {
+                    getWindow().getDecorView().setBackgroundColor(Color.RED);
+
+                } else if (tx < -1.0f) {
+                    getWindow().getDecorView().setBackgroundColor(Color.BLUE);
+                }
+
+            }
+        });
+
+        gyroscope.setListener(new Gyroscope.Listener() {
+            @Override
+            public void onRotation(float rx, float ry, float rz) {
+                gyro.setText("R - x: " + rx + ", y: " + ry + ", z: " + rz);
+                if (rz > 1.0f) {
+                    getWindow().getDecorView().setBackgroundColor(Color.GREEN);
+
+                } else if (rz < -1.0f) {
+                    getWindow().getDecorView().setBackgroundColor(Color.YELLOW);
+                }
+            }
+        });
+
+        frameLayout = (FrameLayout) findViewById(R.id.frameLayout);
         //Open Camera
         camera = android.hardware.Camera.open();
         showCamera = new ShowCamera(this, camera);
-
         frameLayout.addView(showCamera);
 
         //get the spinner from the xml.
@@ -39,6 +75,27 @@ public class MainActivity extends AppCompatActivity {
         dropdown.setAdapter(adapter);
 
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        accelerometer.register();
+        gyroscope.register();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        accelerometer.unregister();
+        gyroscope.unregister();
+    }
+
+    public void captureImage(View v){
+        if (camera != null) {
+            camera.takePicture(null, null, mPictureCallback);
+        }
     }
 
     Camera.PictureCallback mPictureCallback = new Camera.PictureCallback() {
@@ -64,9 +121,5 @@ public class MainActivity extends AppCompatActivity {
 
     };
 
-    public void captureImage(View v){
-        if (camera != null) {
-            camera.takePicture(null, null, mPictureCallback);
-        }
-    }
+
 }
