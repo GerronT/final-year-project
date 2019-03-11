@@ -1,6 +1,9 @@
 package com.example.volumecalculator;
 
 import android.hardware.Camera;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.*;
@@ -16,9 +19,20 @@ public class MainActivity extends AppCompatActivity {
     private ShowCamera showCamera;
     private Accelerometer accelerometer;
     private Gyroscope gyroscope;
+    private MagneticSensor magneticSensor;
 
-    private EditText accel;
-    private EditText gyro;
+    // magnetic field values
+    private float[] geomagnetic;
+    // accelerometer values
+    private float[] gravity;
+
+    float[] RR = new float[9];
+    float[] orientation = new float[3];
+
+    private TextView accel;
+    private TextView gyro;
+    private TextView magnet;
+
     int current = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,34 +41,38 @@ public class MainActivity extends AppCompatActivity {
 
         accelerometer = new Accelerometer(this);
         gyroscope = new Gyroscope(this);
+        magneticSensor = new MagneticSensor(this);
 
         accel = findViewById(R.id.accel);
         gyro = findViewById(R.id.gyro);
+        magnet = findViewById(R.id.magnet);
+
+        magneticSensor.setListener(new MagneticSensor.Listener() {
+            @Override
+            public void onMagneticFieldChanged(float[] values) {
+                magnet.setText("M - x: " + values[0] + ", y: " + values[1] + ", z: " + values[2]);
+                geomagnetic = values.clone();
+
+
+                updateOrientation();
+            }
+        });
 
         accelerometer.setListener(new Accelerometer.Listener() {
             @Override
-            public void onTranslation(float tx, float ty, float tz) {
-                accel.setText("T - x: " + tx + ", y: " + ty + ", z: " + tz);
-                if (tx > 1.0f) {
-                    getWindow().getDecorView().setBackgroundColor(Color.RED);
+            public void onTranslation(float[] values) {
+                accel.setText("T - x: " + values[0] + ", y: " + values[1] + ", z: " + values[2]);
+                gravity = values.clone();
 
-                } else if (tx < -1.0f) {
-                    getWindow().getDecorView().setBackgroundColor(Color.BLUE);
-                }
-
+                updateOrientation();
             }
         });
 
         gyroscope.setListener(new Gyroscope.Listener() {
             @Override
             public void onRotation(float rx, float ry, float rz) {
-                gyro.setText("R - x: " + rx + ", y: " + ry + ", z: " + rz);
-                if (rz > 1.0f) {
-                    getWindow().getDecorView().setBackgroundColor(Color.GREEN);
+                //gyro.setText("R - x: " + rx + ", y: " + ry + ", z: " + rz);
 
-                } else if (rz < -1.0f) {
-                    getWindow().getDecorView().setBackgroundColor(Color.YELLOW);
-                }
             }
         });
 
@@ -77,12 +95,22 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void updateOrientation() {
+        if (geomagnetic != null && gravity != null) {
+            SensorManager.getRotationMatrix(RR, null, gravity, geomagnetic);
+            SensorManager.getOrientation(RR, orientation);
+
+            gyro.setText("RR: " + RR[0] + " Orientation: " + orientation[2]);
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
 
         accelerometer.register();
         gyroscope.register();
+        magneticSensor.register();
     }
 
     @Override
@@ -90,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         accelerometer.unregister();
         gyroscope.unregister();
+        magneticSensor.unregister();
     }
 
     public void captureImage(View v){

@@ -1,14 +1,14 @@
 package com.example.volumecalculator;
 
 import android.content.Context;
-import android.hardware.SensorEvent;
-import android.hardware.SensorManager;
 import android.hardware.Sensor;
+import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 
-public class Accelerometer {
+public class MagneticSensor {
     public interface Listener {
-        void onTranslation(float[] values);
+        void onMagneticFieldChanged(float[] values);
     }
     private Listener listener;
     public void setListener(Listener l) {
@@ -18,14 +18,14 @@ public class Accelerometer {
     private Sensor sensor;
     private SensorEventListener sensorEventListener;
 
-    Accelerometer(Context context) {
+    MagneticSensor(Context context) {
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         sensorEventListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
                 if (listener != null) {
-                    listener.onTranslation(sensorEvent.values);
+                    listener.onMagneticFieldChanged(sensorEvent.values);
                 }
 
             }
@@ -35,6 +35,7 @@ public class Accelerometer {
 
             }
         };
+
     }
 
     public void register() {
@@ -44,4 +45,5 @@ public class Accelerometer {
     public void unregister() {
         sensorManager.unregisterListener(sensorEventListener);
     }
+
 }
