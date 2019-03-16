@@ -8,7 +8,7 @@ import android.hardware.SensorEventListener;
 
 public class Accelerometer {
     public interface Listener {
-        void onTranslation(float[] values);
+        void onTranslation(float [] values);
     }
     private Listener listener;
     public void setListener(Listener l) {

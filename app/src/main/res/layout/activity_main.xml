@@ -6,29 +6,27 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <ImageView
-        android:id="@+id/crosshair"
-        android:layout_width="33dp"
-        android:layout_height="37dp"
-        android:layout_above="@id/frameLayout"
-        android:layout_gravity="center"
-        android:layout_marginStart="100dp"
-        android:layout_marginLeft="100dp"
-        android:layout_marginBottom="360dp"
-        android:src="@android:drawable/presence_online"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="229dp"
         android:layout_height="275dp"
-        android:layout_above="@id/crosshair"
         android:layout_marginStart="112dp"
         android:layout_marginLeft="112dp"
         android:layout_marginBottom="124dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/crosshair"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="224dp"
+        android:layout_marginLeft="224dp"
+        android:layout_marginBottom="248dp"
+        android:src="@android:drawable/presence_online"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/button"
@@ -175,12 +173,22 @@
 
     <TextView
         android:id="@+id/or"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginLeft="28dp"
-        android:layout_marginBottom="228dp"
+        android:layout_width="33dp"
+        android:layout_height="23dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="84dp"
         android:text="ORI"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/angleVal"
+        android:layout_width="68dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="256dp"
+        android:layout_marginLeft="256dp"
+        android:text="TextView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
