@@ -36,9 +36,9 @@
 \af0\afs22\alang1025 \ltrch\fcs0 \fs22\lang2057\langfe2057\loch\f31506\hich\af31506\dbch\af31505\cgrid\langnp2057\langfenp2057 \snext0 \sqformat \spriority0 Normal;}{\*\cs10 \additive \ssemihidden \sunhideused \spriority1 Default Paragraph Font;}{\*
 \ts11\tsrowd\trftsWidthB3\trpaddl108\trpaddr108\trpaddfl3\trpaddft3\trpaddfb3\trpaddfr3\trcbpat1\trcfpat1\tblind0\tblindtype3\tsvertalt\tsbrdrt\tsbrdrl\tsbrdrb\tsbrdrr\tsbrdrdgl\tsbrdrdgr\tsbrdrh\tsbrdrv \ql \li0\ri0\sa160\sl259\slmult1
 \widctlpar\wrapdefault\aspalpha\aspnum\faauto\adjustright\rin0\lin0\itap0 \rtlch\fcs1 \af0\afs22\alang1025 \ltrch\fcs0 \fs22\lang2057\langfe2057\loch\f31506\hich\af31506\dbch\af31505\cgrid\langnp2057\langfenp2057 \snext11 \ssemihidden \sunhideused 
-Normal Table;}}{\*\rsidtbl \rsid1191352\rsid5854094\rsid9832171\rsid14902613}{\mmathPr\mmathFont34\mbrkBin0\mbrkBinSub0\msmallFrac0\mdispDef1\mlMargin0\mrMargin0\mdefJc1\mwrapIndent1440\mintLim0\mnaryLim1}{\info{\operator Gerron Tinoy}
-{\creatim\yr2019\mo3\dy15\hr17\min29}{\revtim\yr2019\mo3\dy16\hr1\min10}{\version4}{\edmins24}{\nofpages1}{\nofwords40}{\nofchars233}{\nofcharsws272}{\vern99}}{\*\xmlnstbl {\xmlns1 http://schemas.microsoft.com/office/word/2003/wordml}}
-\paperw12240\paperh15840\margl1440\margr1440\margt1440\margb1440\gutter0\ltrsect 
+Normal Table;}}{\*\rsidtbl \rsid1191352\rsid1852610\rsid4401206\rsid5854094\rsid6043120\rsid9832171\rsid14902613}{\mmathPr\mmathFont34\mbrkBin0\mbrkBinSub0\msmallFrac0\mdispDef1\mlMargin0\mrMargin0\mdefJc1\mwrapIndent1440\mintLim0\mnaryLim1}{\info
+{\operator Gerron Tinoy}{\creatim\yr2019\mo3\dy15\hr17\min29}{\revtim\yr2019\mo3\dy16\hr15\min50}{\version6}{\edmins30}{\nofpages1}{\nofwords62}{\nofchars356}{\nofcharsws417}{\vern99}}{\*\xmlnstbl {\xmlns1 http://schemas.microsoft.com/office/word/2003/wor
+dml}}\paperw12240\paperh15840\margl1440\margr1440\margt1440\margb1440\gutter0\ltrsect 
 \widowctrl\ftnbj\aenddoc\trackmoves0\trackformatting1\donotembedsysfont0\relyonvml0\donotembedlingdata1\grfdocevents0\validatexml0\showplaceholdtext0\ignoremixedcontent0\saveinvalidxml0\showxmlerrors0\horzdoc\dghspace120\dgvspace120\dghorigin1701
 \dgvorigin1984\dghshow0\dgvshow3\jcompress\viewkind1\viewscale100\rsidroot5854094 \nouicompat \fet0{\*\wgrffmtfilter 2450}\nofeaturethrottle1\ilfomacatclnup0\ltrpar \sectd \ltrsect\linex0\sectdefaultcl\sftnbj {\*\pnseclvl1
 \pnucrm\pnstart1\pnindent720\pnhang {\pntxta .}}{\*\pnseclvl2\pnucltr\pnstart1\pnindent720\pnhang {\pntxta .}}{\*\pnseclvl3\pndec\pnstart1\pnindent720\pnhang {\pntxta .}}{\*\pnseclvl4\pnlcltr\pnstart1\pnindent720\pnhang {\pntxta )}}{\*\pnseclvl5
@@ -49,8 +49,13 @@ Normal Table;}}{\*\rsidtbl \rsid1191352\rsid5854094\rsid9832171\rsid14902613}{\m
 \par \hich\af37\dbch\af31505\loch\f37 - Object must be touching the ground (Pre-condition)
 \par }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid5854094 \hich\af37\dbch\af31505\loch\f37 -Landscape mode not supported
 \par \hich\af37\dbch\af31505\loch\f37 -Orientation is on the x-axis (portrait) compared landscape (y-axis)
-\par }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid9832171 \hich\af37\dbch\af31505\loch\f37 -Handle \hich\af37\dbch\af31505\loch\f37 undesired \hich\af37\dbch\af31505\loch\f37 angles 
+\par }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid9832171 \hich\af37\dbch\af31505\loch\f37 -Handle undesired angles 
 \par }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid1191352 \hich\af37\dbch\af31505\loch\f37 -Change color of crosshair upon clicking
+\par }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid6043120 -}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid4401206 \hich\af37\dbch\af31505\loch\f37 Use roll to calculate object width}{\rtlch\fcs1 \af37 \ltrch\fcs0 
+\f37\lang9\langfe2057\langnp9\insrsid6043120 
+\par }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid1852610 
+\par \hich\af37\dbch\af31505\loch\f37 -In future, can caclulate altitude\hich\af37\dbch\af31505\loch\f37  to measure building \hich\af37\dbch\af31505\loch\f37 while in higher alti\hich\af37\dbch\af31505\loch\f37 tude. Might \hich\af37\dbch\af31505\loch\f37 
+require more sensors
 \par }{\*\themedata 504b030414000600080000002100e9de0fbfff0000001c020000130000005b436f6e74656e745f54797065735d2e786d6cac91cb4ec3301045f748fc83e52d4a
 9cb2400825e982c78ec7a27cc0c8992416c9d8b2a755fbf74cd25442a820166c2cd933f79e3be372bd1f07b5c3989ca74aaff2422b24eb1b475da5df374fd9ad
 5689811a183c61a50f98f4babebc2837878049899a52a57be670674cb23d8e90721f90a4d2fa3802cb35762680fd800ecd7551dc18eb899138e3c943d7e503b6
@@ -195,8 +200,8 @@ fffffffffffffffffdfffffffeffffffffffffffffffffffffffffffffffffffffffffffffffffff
 ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffffff52006f006f007400200045006e00740072007900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000016000500ffffffffffffffffffffffff0c6ad98892f1d411a65f0040963251e5000000000000000000000000e00a
-d61095dbd401feffffff00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffffffffffffffff00000000000000000000000000000000000000000000000000000000
+ffffffffffffffffffffffffffffffff52006f006f007400200045006e00740072007900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000016000500ffffffffffffffffffffffff0c6ad98892f1d411a65f0040963251e50000000000000000000000002008
+55ed0fdcd401feffffff00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffffffffffffffff00000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffffffffffffffff0000000000000000000000000000000000000000000000000000
 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffffffffffffffff000000000000000000000000000000000000000000000000
 0000000000000000000000000000000000000000000000000105000000000000}}

@@ -12,6 +12,8 @@ import android.view.*;
 import android.graphics.*;
 import android.media.*;
 
+import java.util.Arrays;
+
 
 public class MainActivity extends AppCompatActivity {
     // Declare camera related objects
@@ -75,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         groundAngle = 0;
 
         // initialise camera height
-        cameraHeightFromGround = 162;
+        cameraHeightFromGround = 162 / 100;
 
         // link UI Components
         cameraFrame = (FrameLayout) findViewById(R.id.frameLayout);
@@ -122,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         centrePoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                take_angles();
+                getAngles();
             }
         });
 
@@ -146,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 cameraHeightFromGround = i;
+                cameraHeightFromGround = cameraHeightFromGround / 100;
                 cameraHeightValue.setText("height from ground = " + String.valueOf(i) + " CM");
             }
 
@@ -176,24 +179,23 @@ public class MainActivity extends AppCompatActivity {
             SensorManager.getRotationMatrix(RR, null, gravity, geomagnetic);
             SensorManager.getOrientation(RR, orientation);
             angleValue.setText("x: " + String.format("%.1f",convertToDegrees(orientation[1])));
-
         }
     }
 
     public double convertToDegrees(float orientation) {
         double degrees = Math.toDegrees(orientation) % 360 + 90;
-
-        if (degrees > 90)
+        if (degrees > 90) {
             degrees = 180 - degrees;
-
+        }
+        // device is tilted backwards if RR[8] value is positive
+        if (Math.toDegrees(RR[8]) < 0) {
+            degrees = -degrees;
+        }
         return degrees;
-
     }
-
-    /**
-     * I-take angles from sensors.
-     */
-    void take_angles() {
+    
+    void getAngles() {
+        // get angle values for ground, bottom object and top object
         if (!onGroundSwitch.isChecked() && groundAngle == 0) {
             groundAngle = convertToDegrees(orientation[1]);
             centrePoint.setColorFilter(Color.BLUE);
@@ -205,133 +207,131 @@ public class MainActivity extends AppCompatActivity {
         else if (topObAngle == 0) {
             topObAngle = convertToDegrees(orientation[1]);
             centrePoint.setColorFilter(Color.YELLOW);
+
+            // Calibrate Angle Values
+            calibrateAngleValues();
+
+            // perform calculations
             if (!onGroundSwitch.isChecked())
-                object_calculations_doesnt_touch_ground();
+                measureObjectAboveGround();
             else
-                object_calculations_touch_ground();
+                measureObjectOnGround();
         }
     }
 
-    /**
-     * I-choose automatically which method will be execute (on ground).
-     */
-    void object_calculations_touch_ground() {
-        if (botObAngle < 0 && topObAngle > 0)//base case
-        {
-            double temp = topObAngle;
-            topObAngle = botObAngle;
-            botObAngle = temp;
-            base_case();
-        } else if ((botObAngle > 0 && topObAngle > 0) && (botObAngle < topObAngle))//smaller object
-        {
-            double temp = topObAngle;
-            topObAngle = botObAngle;
-            botObAngle = temp;
-            measure_small_object();
-        } else if (topObAngle < 0 && botObAngle > 0)//base case
-            base_case();
-        else //smaller object
-            measure_small_object();
-    }
+    public void calibrateAngleValues() {
+        if (!onGroundSwitch.isChecked()) {
+            // three angle values
+            // sort out in order first
+            double[] tempArr = new double[]{groundAngle, botObAngle, topObAngle};
+            Arrays.sort(tempArr);
+            int pos = numOfPos(tempArr);
+            int neg = numOfNeg(tempArr);
+            if (pos == 3) {
+                tempArr[2] = tempArr[2] - tempArr[1];
+                tempArr[1] = tempArr[1] - tempArr[0];
+            } else if (neg == 3) {
+                tempArr[0] = tempArr[0] - tempArr[1];
+                tempArr[1] = tempArr[1] - tempArr[2];
+            } else if (pos == 2 && neg == 1) {
+                tempArr[2] = tempArr[2] - tempArr[1];
+            } else if (neg == 2 && pos == 1) {
+                tempArr[0] = tempArr[0] - tempArr[1];
+            } else {
+                // pos and neg values aren't adding up to 3
+            }
+            groundAngle = tempArr[2];
+            botObAngle = tempArr[1];
+            topObAngle = tempArr[0];
 
-    /**
-     * I-measure object started from ground and taller than human.
-     */
-    void base_case() {
-        botObAngle = Math.abs(botObAngle); //gives absolute value (positive value)
-        topObAngle = Math.abs(topObAngle);
-        objectDistance = cameraHeightFromGround / Math.tan(Math.toRadians(botObAngle));
-        objectHeight = cameraHeightFromGround + Math.tan(Math.toRadians(topObAngle)) * objectDistance;
-        if (objectHeight / 100 > 0) {
-            results.setText("objectHeight :\n" + String.valueOf(String.format("%.2f", (objectHeight / 100)) + " M" +
-                    "\n" + "objectDistance :\n" + String.valueOf(String.format("%.2f", (objectDistance / 100))) + " M"));
         } else {
-            Toast.makeText(MainActivity.this, "Move Forward", Toast.LENGTH_LONG).show();
-            botObAngle = 0;
-            topObAngle = 0;
+            // two angle values
+            // sort out in order first
+            double[] tempArr = new double[]{botObAngle, topObAngle};
+            Arrays.sort(tempArr);
+            int pos = numOfPos(tempArr);
+            int neg = numOfNeg(tempArr);
+            if (pos == 2) {
+                tempArr[1] = tempArr[1] - tempArr[0];
+            } else if (neg == 2) {
+                tempArr[0] = tempArr[0] - tempArr[1];
+            }
+            // Otherewise don't do anything (if one value is positive and the other is negative,
+            // their values doesn't need calibrating)
+            botObAngle = tempArr[1];
+            topObAngle = tempArr[0];
         }
-
-
     }
 
-    /**
-     * I-measure object started from ground and shorter than human.
-     */
-    void measure_small_object() {
-        botObAngle = Math.abs(botObAngle);
-        topObAngle = Math.abs(topObAngle);
-        double distance_angle = 90 - botObAngle;
-        objectDistance = cameraHeightFromGround * Math.tan(Math.toRadians(distance_angle));
-        double part_of_my_tall = objectDistance * Math.tan(Math.toRadians(topObAngle));
-        objectHeight = cameraHeightFromGround - part_of_my_tall;
-        if (objectHeight / 100 > 0) {
-            results.setText("objectHeight :\n" + String.valueOf(String.format("%.2f", (objectHeight / 100)) + " M" +
-                    "\n" + "objectDistance :\n" + String.valueOf(String.format("%.2f", (objectDistance / 100))) + " M"));
+    public int numOfPos(double[] array) {
+        int count = 0;
+        for (int i=0; i < array.length; i++) {
+            if (array[i] >= 0)
+                count++;
+        }
+        return count;
+    }
+
+    public int numOfNeg(double[] array) {
+        int count = 0;
+        for (int i=0; i < array.length; i++) {
+            if (array[i] < 0)
+                count++;
+        }
+        return count;
+    }
+
+
+    public double getTanFromDegrees(double degrees) {
+        return Math.tan(degrees * Math.PI/180);
+    }
+
+    public void measureObjectOnGround() {
+        // Object touches ground and is above eye level
+        if (botObAngle > 0 && topObAngle < 0) {
+            objectDistance = cameraHeightFromGround * getTanFromDegrees(90 - Math.abs(botObAngle));
+            objectHeight = objectDistance * getTanFromDegrees(Math.abs(topObAngle)) + cameraHeightFromGround;
+            // show results
+            displayResults();
+        // Object touches ground and is below eye level
+        } else if (botObAngle > 0 && topObAngle > 0) {
+            objectDistance = cameraHeightFromGround * getTanFromDegrees(90 - Math.abs(botObAngle));
+            objectHeight = cameraHeightFromGround - (objectDistance * getTanFromDegrees(Math.abs(topObAngle)));
+            // show results
+            displayResults();
         } else {
-            Toast.makeText(MainActivity.this, "Move Forward", Toast.LENGTH_LONG).show();
-            botObAngle = 0;
-            topObAngle = 0;
+            // Unexpected Input
+            results.setText("Unexpected Input");
         }
-
-    }
-    /**
-     * I-choose automatically which method will be execute (above ground).
-     */
-    void object_calculations_doesnt_touch_ground() {
-        if (groundAngle > 0 && botObAngle > 0 && topObAngle < 0)
-            object_on_eyes_level_calc();
-        else if (groundAngle > 0 && botObAngle < 0 && topObAngle < 0)
-            object_upper_eyes_level_calc();
-        else if (groundAngle > 0 && botObAngle > 0 && topObAngle > 0)
-            object_below_eyes_level_calc();
     }
 
-    /**
-     * I-measure object started above ground and on eye's level.
-     */
-    void object_on_eyes_level_calc() {
-        botObAngle = Math.abs(botObAngle);
-        topObAngle = Math.abs(topObAngle);
-        groundAngle = 90 - groundAngle;
-        objectDistance = cameraHeightFromGround * Math.tan(Math.toRadians(groundAngle));
-        double part_down = objectDistance * Math.tan(Math.toRadians(botObAngle));
-        double part_up = objectDistance * Math.tan(Math.toRadians(topObAngle));
-        objectHeight = part_down + part_up;
-        objectGroundHeight = cameraHeightFromGround - part_down;
-        results.setText("objectHeight :\n" + String.valueOf(String.format("%.2f", (objectHeight / 100)))
-                + " M" + "\n" + "objectDistance :\n" + String.valueOf(String.format("%.2f", (objectDistance / 100))) +
-                " M" + "\n" + "height_from_ground :\n" + String.valueOf(String.format("%.2f", (objectGroundHeight / 100))) + " M");
+    public void measureObjectAboveGround() {
+        // Object doesn't touch ground and is above eye level
+        if (groundAngle > 0 && botObAngle < 0 && topObAngle < 0) {
+            objectDistance = cameraHeightFromGround * (getTanFromDegrees(90 - Math.abs(groundAngle)));
+            objectHeight = (objectDistance * getTanFromDegrees(Math.abs(topObAngle) + Math.abs(botObAngle))) - (objectDistance * getTanFromDegrees(Math.abs(botObAngle)));
+            // show results
+            displayResults();
+        // Object doesn't touch ground and is below eye level
+        } else if (groundAngle > 0 && botObAngle > 0 && topObAngle > 0) {
+            objectDistance = cameraHeightFromGround * getTanFromDegrees(90 - Math.abs(groundAngle) - Math.abs(botObAngle) - Math.abs(topObAngle));
+            objectHeight = (objectDistance * getTanFromDegrees(Math.abs(botObAngle) + Math.abs(topObAngle))) - (objectDistance * getTanFromDegrees(Math.abs(topObAngle)));
+            // show results
+            displayResults();
+        // Object doesn't touch ground and is on eye level
+        } else if (groundAngle < 0 && botObAngle > 0 && topObAngle < 0) {
+            objectDistance = cameraHeightFromGround * getTanFromDegrees(90 - Math.abs(groundAngle));
+            objectHeight = (objectDistance *  getTanFromDegrees(Math.abs(botObAngle))) + (objectDistance *  getTanFromDegrees(Math.abs(topObAngle)));
+            // show results
+            displayResults();
+        } else {
+            // Unexpected Input
+            results.setText("Unexpected Input");
+        }
     }
 
-    /**
-     * I-measure object started above ground and upper than eye's level.
-     */
-    void object_upper_eyes_level_calc() {
-        botObAngle = Math.abs(botObAngle);
-        topObAngle = Math.abs(topObAngle);
-
-        groundAngle = 90 - groundAngle;
-        objectDistance = cameraHeightFromGround * Math.tan(Math.toRadians(groundAngle));
-        double part = objectDistance * Math.tan(Math.toRadians(botObAngle));
-        double all = objectDistance * Math.tan(Math.toRadians(topObAngle));
-        objectHeight = all - part;
-        objectGroundHeight = cameraHeightFromGround + part;
-        results.setText("objectHeight :\n" + String.valueOf(String.format("%.2f", (objectHeight / 100))) + " M" + "\n" + "objectDistance :\n" + String.valueOf(String.format("%.2f", (objectDistance / 100))) + " M" + "\n" + "height_from_ground :\n" + String.valueOf(String.format("%.2f", (objectGroundHeight / 100))) + " M");
-    }
-
-    /**
-     * I-measure object started above ground and shorter than eye's level.
-     */
-    void object_below_eyes_level_calc() {
-        botObAngle = Math.abs(botObAngle);
-        topObAngle = Math.abs(topObAngle);
-        groundAngle = 90 - groundAngle;
-        objectDistance = cameraHeightFromGround * Math.tan(Math.toRadians(groundAngle));
-        double all = objectDistance * Math.tan(Math.toRadians(botObAngle));
-        double part = objectDistance * Math.tan(Math.toRadians(topObAngle));
-        objectHeight = all - part;
-        objectGroundHeight = cameraHeightFromGround - all;
-        results.setText("objectHeight :\n" + String.valueOf(String.format("%.2f", (objectHeight / 100))) + " M" + "\n" + "objectDistance :\n" + String.valueOf(String.format("%.2f", (objectDistance / 100))) + " M" + "\n" + "height_from_ground :\n" + String.valueOf(String.format("%.2f", (objectGroundHeight / 100))) + " M");
+    public void displayResults() {
+        results.setText("Object Distance: " + String.format("%.2f",objectDistance) + "m\n Object Height: " + String.format("%.2f", objectHeight) + "m");
     }
 
     @Override
@@ -369,11 +369,8 @@ public class MainActivity extends AppCompatActivity {
                 secondPhoto.setImageBitmap(capturedImage);
                 current = 1;
             }
-
-
         }
 
     };
-
 
 }

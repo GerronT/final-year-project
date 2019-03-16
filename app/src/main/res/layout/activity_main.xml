@@ -153,9 +153,9 @@
         android:id="@+id/touchGround"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="140dp"
-        android:layout_marginLeft="140dp"
-        android:layout_marginBottom="84dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="448dp"
         android:text="Touch Ground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -173,11 +173,11 @@
 
     <TextView
         android:id="@+id/or"
-        android:layout_width="33dp"
-        android:layout_height="23dp"
+        android:layout_width="252dp"
+        android:layout_height="46dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginBottom="84dp"
+        android:layout_marginBottom="64dp"
         android:text="ORI"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
