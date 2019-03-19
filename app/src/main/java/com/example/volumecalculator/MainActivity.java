@@ -44,6 +44,10 @@ public class MainActivity extends AppCompatActivity {
     // Declare calibrated user input values
     private double cameraHeightFromGround;
 
+    // extras
+    private double leftObAngle, rightObAngle;
+    private double objectWidth;
+
     private int current = 1;
 
     @Override
@@ -76,6 +80,9 @@ public class MainActivity extends AppCompatActivity {
         topObAngle = 0;
         groundAngle = 0;
 
+        leftObAngle = 0;
+        rightObAngle = 0;
+
         // initialise camera height
         cameraHeightFromGround = 162 / 100;
 
@@ -107,6 +114,9 @@ public class MainActivity extends AppCompatActivity {
                 botObAngle = 0;
                 topObAngle = 0;
                 groundAngle = 0;
+
+                leftObAngle = 0;
+                rightObAngle = 0;
 
                 // Set results text to empty
                 results.setText("");
@@ -178,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
         if (geomagnetic != null && gravity != null) {
             SensorManager.getRotationMatrix(RR, null, gravity, geomagnetic);
             SensorManager.getOrientation(RR, orientation);
-            angleValue.setText("x: " + String.format("%.1f",convertToDegrees(orientation[1])));
+            angleValue.setText("x: " + String.format("%.1f",convertToDegrees(orientation[1])) + " y: " + String.format("%.1f",convertToDegrees(orientation[2])));
         }
     }
 
@@ -216,10 +226,40 @@ public class MainActivity extends AppCompatActivity {
                 measureObjectAboveGround();
             else
                 measureObjectOnGround();
+        } else if (leftObAngle == 0) {
+            leftObAngle = adjust_angle_rotation(Math.toDegrees(orientation[2]) % 360 + 90);
+            centrePoint.setColorFilter(Color.MAGENTA);
+        } else if (rightObAngle == 0) {
+            rightObAngle = adjust_angle_rotation(Math.toDegrees(orientation[2]) % 360 + 90);
+            centrePoint.clearColorFilter();
+            // calibrate values. Left angle should always be greater than right angle
+            double temp = leftObAngle;
+            if (leftObAngle < rightObAngle) {
+                leftObAngle = rightObAngle;
+                rightObAngle = temp;
+            }
+            measureObjectWidth();
         }
+
+
+    }
+
+    public void measureObjectWidth() {
+        objectWidth = (objectDistance * getTanFromDegrees(Math.abs(leftObAngle))) + (objectDistance * getTanFromDegrees(Math.abs(rightObAngle)));
+        results.append("\n Object width: " + String.format("%.2f", objectWidth) + "m");
+    }
+
+    double adjust_angle_rotation(double angle) {
+        double temp;
+        temp = angle;
+        if (temp > 90) {
+            temp = 180 - temp;
+        }
+        return temp;
     }
 
     public void calibrateAngleValues() {
+        // This function ensures that object angles
         if (!onGroundSwitch.isChecked()) {
             // three angle values
             // sort out in order first
@@ -289,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
     public void measureObjectOnGround() {
         // Object touches ground and is above eye level
         if (botObAngle > 0 && topObAngle < 0) {
-            objectDistance = cameraHeightFromGround * getTanFromDegrees(90 - Math.abs(botObAngle));
+            objectDistance = cameraHeightFromGround * getTanFromDegrees(90 - Math.abs(botObAngle) - Math.abs(topObAngle));
             objectHeight = objectDistance * getTanFromDegrees(Math.abs(topObAngle)) + cameraHeightFromGround;
             // show results
             displayResults();
@@ -309,6 +349,7 @@ public class MainActivity extends AppCompatActivity {
         // Object doesn't touch ground and is above eye level
         if (groundAngle > 0 && botObAngle < 0 && topObAngle < 0) {
             objectDistance = cameraHeightFromGround * (getTanFromDegrees(90 - Math.abs(groundAngle)));
+            objectGroundHeight = cameraHeightFromGround + (objectDistance * getTanFromDegrees(Math.abs(botObAngle)));
             objectHeight = (objectDistance * getTanFromDegrees(Math.abs(topObAngle) + Math.abs(botObAngle))) - (objectDistance * getTanFromDegrees(Math.abs(botObAngle)));
             // show results
             displayResults();
@@ -316,11 +357,13 @@ public class MainActivity extends AppCompatActivity {
         } else if (groundAngle > 0 && botObAngle > 0 && topObAngle > 0) {
             objectDistance = cameraHeightFromGround * getTanFromDegrees(90 - Math.abs(groundAngle) - Math.abs(botObAngle) - Math.abs(topObAngle));
             objectHeight = (objectDistance * getTanFromDegrees(Math.abs(botObAngle) + Math.abs(topObAngle))) - (objectDistance * getTanFromDegrees(Math.abs(topObAngle)));
+            objectGroundHeight = cameraHeightFromGround - objectHeight - (objectDistance * getTanFromDegrees(Math.abs(topObAngle)));
             // show results
             displayResults();
         // Object doesn't touch ground and is on eye level
         } else if (groundAngle < 0 && botObAngle > 0 && topObAngle < 0) {
             objectDistance = cameraHeightFromGround * getTanFromDegrees(90 - Math.abs(groundAngle));
+            objectGroundHeight = cameraHeightFromGround - (objectDistance * getTanFromDegrees(Math.abs(botObAngle)));
             objectHeight = (objectDistance *  getTanFromDegrees(Math.abs(botObAngle))) + (objectDistance *  getTanFromDegrees(Math.abs(topObAngle)));
             // show results
             displayResults();
@@ -332,6 +375,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void displayResults() {
         results.setText("Object Distance: " + String.format("%.2f",objectDistance) + "m\n Object Height: " + String.format("%.2f", objectHeight) + "m");
+        if (objectGroundHeight > 0) {
+            results.append("\nObject Ground Height: " + String.format("%.2f", objectGroundHeight) + "m");
+        }
     }
 
     @Override
