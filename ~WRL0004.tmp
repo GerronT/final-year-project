@@ -36,10 +36,9 @@
 \af0\afs22\alang1025 \ltrch\fcs0 \fs22\lang2057\langfe2057\loch\f31506\hich\af31506\dbch\af31505\cgrid\langnp2057\langfenp2057 \snext0 \sqformat \spriority0 Normal;}{\*\cs10 \additive \ssemihidden \sunhideused \spriority1 Default Paragraph Font;}{\*
 \ts11\tsrowd\trftsWidthB3\trpaddl108\trpaddr108\trpaddfl3\trpaddft3\trpaddfb3\trpaddfr3\trcbpat1\trcfpat1\tblind0\tblindtype3\tsvertalt\tsbrdrt\tsbrdrl\tsbrdrb\tsbrdrr\tsbrdrdgl\tsbrdrdgr\tsbrdrh\tsbrdrv \ql \li0\ri0\sa160\sl259\slmult1
 \widctlpar\wrapdefault\aspalpha\aspnum\faauto\adjustright\rin0\lin0\itap0 \rtlch\fcs1 \af0\afs22\alang1025 \ltrch\fcs0 \fs22\lang2057\langfe2057\loch\f31506\hich\af31506\dbch\af31505\cgrid\langnp2057\langfenp2057 \snext11 \ssemihidden \sunhideused 
-Normal Table;}}{\*\rsidtbl \rsid1060987\rsid1191352\rsid1852610\rsid1993908\rsid2242886\rsid2714943\rsid4401206\rsid4660734\rsid5274328\rsid5854094\rsid6043120\rsid6106961\rsid6685874\rsid6904820\rsid8128014\rsid8222404\rsid8871277\rsid9204546\rsid9662686
-\rsid9720477\rsid9832171\rsid10174786\rsid10706181\rsid11355302\rsid11873716\rsid11938652\rsid12210524\rsid12484545\rsid12612235\rsid12914265\rsid13764682\rsid14574344\rsid14628110\rsid14902613\rsid15426395\rsid15432249\rsid15490102\rsid15754894
-\rsid15867029\rsid15883591}{\mmathPr\mmathFont34\mbrkBin0\mbrkBinSub0\msmallFrac0\mdispDef1\mlMargin0\mrMargin0\mdefJc1\mwrapIndent1440\mintLim0\mnaryLim1}{\info{\operator Gerron Tinoy}{\creatim\yr2019\mo3\dy15\hr17\min29}
-{\revtim\yr2019\mo3\dy21\hr1\min13}{\version33}{\edmins1232}{\nofpages1}{\nofwords238}{\nofchars1359}{\nofcharsws1594}{\vern99}}{\*\xmlnstbl {\xmlns1 http://schemas.microsoft.com/office/word/2003/wordml}}
+Normal Table;}}{\*\rsidtbl \rsid1191352\rsid1852610\rsid4401206\rsid5274328\rsid5854094\rsid6043120\rsid6685874\rsid6904820\rsid8128014\rsid8222404\rsid8871277\rsid9204546\rsid9720477\rsid9832171\rsid10174786\rsid10706181\rsid12612235\rsid14574344
+\rsid14902613\rsid15754894\rsid15867029\rsid15883591}{\mmathPr\mmathFont34\mbrkBin0\mbrkBinSub0\msmallFrac0\mdispDef1\mlMargin0\mrMargin0\mdefJc1\mwrapIndent1440\mintLim0\mnaryLim1}{\info{\operator Gerron Tinoy}{\creatim\yr2019\mo3\dy15\hr17\min29}
+{\revtim\yr2019\mo3\dy20\hr1\min49}{\version18}{\edmins623}{\nofpages2}{\nofwords159}{\nofchars908}{\nofcharsws1065}{\vern99}}{\*\xmlnstbl {\xmlns1 http://schemas.microsoft.com/office/word/2003/wordml}}
 \paperw12240\paperh15840\margl1440\margr1440\margt1440\margb1440\gutter0\ltrsect 
 \widowctrl\ftnbj\aenddoc\trackmoves0\trackformatting1\donotembedsysfont0\relyonvml0\donotembedlingdata1\grfdocevents0\validatexml0\showplaceholdtext0\ignoremixedcontent0\saveinvalidxml0\showxmlerrors0\horzdoc\dghspace120\dgvspace120\dghorigin1701
 \dgvorigin1984\dghshow0\dgvshow3\jcompress\viewkind1\viewscale100\rsidroot5854094 \nouicompat \fet0{\*\wgrffmtfilter 2450}\nofeaturethrottle1\ilfomacatclnup0\ltrpar \sectd \ltrsect\linex0\sectdefaultcl\sftnbj {\*\pnseclvl1
@@ -60,41 +59,30 @@ Normal Table;}}{\*\rsidtbl \rsid1060987\rsid1191352\rsid1852610\rsid1993908\rsid
 \hich\af37\dbch\af31505\loch\f37 function.}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid8128014 
 \par }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid8222404 \hich\af37\dbch\af31505\loch\f37 Normally, groundAngle < botObAngle < topObAngle. If this isn\hich\f37 \rquote \loch\f37 
 t the case, these values are automatically ordered pragmatically.}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid9720477 \hich\af37\dbch\af31505\loch\f37  Saves dealing with it later only to get an unexpected input}{\rtlch\fcs1 \af37 
-\ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid1852610 
-\par \hich\af37\dbch\af31505\loch\f37 -In future, can caclulate altitude to measure building wh\hich\af37\dbch\af31505\loch\f37 ile in higher altitude. Might require more sensors}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid5274328 
-
+\ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid8222404 
+\par }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid1852610 
+\par \hich\af37\dbch\af31505\loch\f37 -In future, can caclulate altitude to measure building wh\hich\af37\dbch\af31505\loch\f37 ile in higher altitude. Might require more sensors
+\par }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid5274328 
 \par }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid10174786 \hich\af37\dbch\af31505\loch\f37 Negative RR[}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid9204546 \hich\af37\dbch\af31505\loch\f37 8}{\rtlch\fcs1 \af37 
-\ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid10174786 \hich\af37\dbch\af31505\loch\f37 ] Forward tilt}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid4660734 \hich\af37\dbch\af31505\loch\f37  and }{\rtlch\fcs1 \af37 \ltrch\fcs0 
-\f37\lang9\langfe2057\langnp9\insrsid10174786 \hich\af37\dbch\af31505\loch\f37 Positive RR[}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid9204546 \hich\af37\dbch\af31505\loch\f37 8}{\rtlch\fcs1 \af37 \ltrch\fcs0 
-\f37\lang9\langfe2057\langnp9\insrsid10174786 \hich\af37\dbch\af31505\loch\f37 ] Backward Tilt}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid6685874 \hich\af37\dbch\af31505\loch\f37  \hich\f37 \endash \loch\f37  research why?}{
-\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid4660734 \hich\af37\dbch\af31505\loch\f37  D\hich\af37\dbch\af31505\loch\f37 etermines vec\hich\af37\dbch\af31505\loch\f37 tor}{\rtlch\fcs1 \af37 \ltrch\fcs0 
-\f37\lang9\langfe2057\langnp9\insrsid10706181 
-\par \hich\af37\dbch\af31505\loch\f37 Worry about }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid6904820 \hich\af37\dbch\af31505\loch\f37 the }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid10706181 
-\hich\af37\dbch\af31505\loch\f37 program}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid6904820 \loch\af37\dbch\af31505\hich\f37 \rquote \loch\f37 s}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid10706181 
-\hich\af37\dbch\af31505\loch\f37  design later once everything works}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid8871277 
+\ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid10174786 \hich\af37\dbch\af31505\loch\f37 ] Forward tilt}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid5274328 
+\par }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid10174786 \hich\af37\dbch\af31505\loch\f37 Positive RR[}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid9204546 \hich\af37\dbch\af31505\loch\f37 8}{\rtlch\fcs1 \af37 
+\ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid10174786 \hich\af37\dbch\af31505\loch\f37 ] Backward Tilt}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid6685874 \hich\af37\dbch\af31505\loch\f37  \hich\f37 \endash \loch\f37 
+ research why?}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid10174786 
+\par }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid10706181 
+\par \hich\af37\dbch\af31505\loch\f37 Worry about }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid6904820 \hich\af37\dbch\af31505\loch\f37 th\hich\af37\dbch\af31505\loch\f37 e }{\rtlch\fcs1 \af37 \ltrch\fcs0 
+\f37\lang9\langfe2057\langnp9\insrsid10706181 \hich\af37\dbch\af31505\loch\f37 program}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid6904820 \loch\af37\dbch\af31505\hich\f37 \rquote \hich\af37\dbch\af31505\loch\f37 s}{\rtlch\fcs1 
+\af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid10706181 \hich\af37\dbch\af31505\loch\f37  \hich\af37\dbch\af31505\loch\f37 design later once everything works
+\par }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid8871277 
 \par }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid15754894 \hich\af37\dbch\af31505\loch\f37 R}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid8871277 \hich\af37\dbch\af31505\loch\f37 elativity }{\rtlch\fcs1 \af37 
 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid15754894 \hich\af37\dbch\af31505\loch\f37 between angles }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid8871277 \hich\af37\dbch\af31505\loch\f37 is what matters}{\rtlch\fcs1 \af37 
-\ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid15754894 \hich\af37\dbch\af31505\loch\f37  during calc\hich\af37\dbch\af31505\loch\f37 ulations}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid8871277 ,}{\rtlch\fcs1 \af37 \ltrch\fcs0 
-\f37\lang9\langfe2057\langnp9\insrsid12612235 
-\par \hich\af37\dbch\af31505\loch\f37 Can use reference of the calculated height to calculate width}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid14574344 
-\par \hich\af37\dbch\af31505\loch\f37 Phone screen sizes }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid14628110 \hich\af37\dbch\af31505\loch\f37 compatibility}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid14574344 
-\hich\af37\dbch\af31505\loch\f37  and displacement}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid15867029 
-\par \loch\af37\dbch\af31505\hich\f37 \'93\loch\f37 \hich\f37 gimbal lock\'94\loch\f37  issue with using more than one angle}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid12210524 \hich\af37\dbch\af31505\loch\f37  causes inaccuracy.}{
-\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid15867029 
-\par }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid6106961 \hich\af37\dbch\af31505\loch\f37 O\hich\af37\dbch\af31505\loch\f37 bject \hich\af37\dbch\af31505\loch\f37 reference might \hich\af37\dbch\af31505\loch\f37 be more useful in
-\hich\af37\dbch\af31505\loch\f37  terms of extendibility. \hich\af37\dbch\af31505\loch\f37 Once one measurement is known,\hich\af37\dbch\af31505\loch\f37  usin\hich\af37\dbch\af31505\loch\f37 
-g it as a reference should make the rest of the measurements easy.}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid2714943 \hich\af37\dbch\af31505\loch\f37  }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid2242886 
-\hich\af37\dbch\af31505\loch\f37 However, t}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid14628110 \hich\af37\dbch\af31505\loch\f37 he process will be \hich\af37\dbch\af31505\loch\f37 lon\hich\af37\dbch\af31505\loch\f37 ger.}{
-\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid15490102 
-\par }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid15432249 \hich\af37\dbch\af31505\loch\f37 The goal of the a}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid15490102 \hich\af37\dbch\af31505\loch\f37 
-pplication is to give a rou\hich\af37\dbch\af31505\loch\f37 gh estima\hich\af37\dbch\af31505\loch\f37 tion of}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid13764682 \hich\af37\dbch\af31505\loch\f37  dimensions and }{\rtlch\fcs1 
-\af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid9662686 \hich\af37\dbch\af31505\loch\f37 capacity and}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid13764682 \hich\af37\dbch\af31505\loch\f37 
- should not be expected to give accurate measurements.}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid15490102 
-\par }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid1060987 \hich\af37\dbch\af31505\loch\f37 Rounding }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid12914265 \hich\af37\dbch\af31505\loch\f37 and units }{\rtlch\fcs1 
-\af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid1060987 \hich\af37\dbch\af31505\loch\f37 settings}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid11938652 
-\par }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid1993908 \hich\af37\dbch\af31505\loch\f37 Set some res\hich\af37\dbch\af31505\loch\f37 trictions lock.\hich\af37\dbch\af31505\loch\f37  (e.g. cannot }{\rtlch\fcs1 \af37 \ltrch\fcs0 
-\f37\lang9\langfe2057\langnp9\insrsid11355302 \hich\af37\dbch\af31505\loch\f37 switch modes in the middle of taking measurements)}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid1993908 
-\par }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid15426395 \hich\af37\dbch\af31505\loch\f37 Should angle values be shown?
+\ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid15754894 \hich\af37\dbch\af31505\loch\f37  during calc\hich\af37\dbch\af31505\loch\f37 ulations}{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid8871277 ,
+\par }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid12612235 
+\par \hich\af37\dbch\af31505\loch\f37 C\hich\af37\dbch\af31505\loch\f37 an \hich\af37\dbch\af31505\loch\f37 use reference of the calculated height to calcu\hich\af37\dbch\af31505\loch\f37 l\hich\af37\dbch\af31505\loch\f37 ate width
+\par }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid14574344 
+\par \hich\af37\dbch\af31505\loch\f37 P\hich\af37\dbch\af31505\loch\f37 hone \hich\af37\dbch\af31505\loch\f37 screen sizes compatability and displacement
+\par }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid15867029 
+\par \loch\af37\dbch\af31505\hich\f37 \'93\hich\af37\dbch\af31505\loch\f37 gim\hich\af37\dbch\af31505\loch\f37 bal lock\loch\af37\dbch\af31505\hich\f37 \'94\hich\af37\dbch\af31505\loch\f37  issue with using more than one angle
+\par }{\rtlch\fcs1 \af37 \ltrch\fcs0 \f37\lang9\langfe2057\langnp9\insrsid15883591 
 \par }{\*\themedata 504b030414000600080000002100e9de0fbfff0000001c020000130000005b436f6e74656e745f54797065735d2e786d6cac91cb4ec3301045f748fc83e52d4a
 9cb2400825e982c78ec7a27cc0c8992416c9d8b2a755fbf74cd25442a820166c2cd933f79e3be372bd1f07b5c3989ca74aaff2422b24eb1b475da5df374fd9ad
 5689811a183c61a50f98f4babebc2837878049899a52a57be670674cb23d8e90721f90a4d2fa3802cb35762680fd800ecd7551dc18eb899138e3c943d7e503b6
@@ -239,8 +227,8 @@ fffffffffffffffffdfffffffeffffffffffffffffffffffffffffffffffffffffffffffffffffff
 ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffffff52006f006f007400200045006e00740072007900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000016000500ffffffffffffffffffffffff0c6ad98892f1d411a65f0040963251e5000000000000000000000000e0db
-bd5683dfd401feffffff00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffffffffffffffff00000000000000000000000000000000000000000000000000000000
+ffffffffffffffffffffffffffffffff52006f006f007400200045006e00740072007900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000016000500ffffffffffffffffffffffff0c6ad98892f1d411a65f0040963251e50000000000000000000000008032
+7919bfded401feffffff00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffffffffffffffff00000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffffffffffffffff0000000000000000000000000000000000000000000000000000
 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffffffffffffffff000000000000000000000000000000000000000000000000
 0000000000000000000000000000000000000000000000000105000000000000}}

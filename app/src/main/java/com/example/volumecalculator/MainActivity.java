@@ -12,6 +12,8 @@ import android.view.*;
 import android.graphics.*;
 import android.media.*;
 
+import org.w3c.dom.Text;
+
 import java.util.Arrays;
 
 
@@ -20,26 +22,31 @@ public class MainActivity extends AppCompatActivity {
     private Camera camera;
     private ShowCamera showCamera;
 
+    //Photo thumbs
+    private ImageView firstPhoto, secondPhoto;
+
     // Declare an instance of each sensors
     private Accelerometer accelerometer;
     private MagneticSensor magneticSensor;
 
     // Declaration of components required to calculate the device's orientation
-    private float[] geomagnetic, gravity;
-    private float[] RR = new float[9], orientation = new float[3];
+    private float[] geomagnetic, gravity; //sideGeomagnetic, sideGravity;
+    private float[] RR = new float[9], orientation = new float[3]; //QQ = new float[9], sideOrientation = new float[3];
 
     // Declaration of UI Components
     private FrameLayout cameraFrame;
-    private TextView results, angleValue, cameraHeightValue;
+    private TextView angleLabel, unexpectedAngle, angleValue, cameraHeightValue;
     private SeekBar calibrateCameraHeight;
     private Switch onGroundSwitch;
     private ImageView centrePoint;
+    private RadioGroup choosePic;
+    private RadioButton chosePic1, chosePic2;
 
     // Declare angle variables
     private double botObAngle, topObAngle, groundAngle;
 
     // Declare calculated results
-    private double objectDistance, objectHeight, objectGroundHeight;;
+    private double objectDistance, objectHeight, objectGroundHeight;
 
     // Declare calibrated user input values
     private double cameraHeightFromGround;
@@ -47,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
     // extras
     private double leftObAngle, rightObAngle;
     private double objectWidth;
+
+    private Button captureButton, volumeButton;
+    private TextView width1, height1, area1, width2, height2, area2, volume;
 
     private int current = 1;
 
@@ -71,6 +81,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void initVars(){
+        // Photo thumbnails
+        firstPhoto = (ImageView) findViewById(R.id.img1);
+        secondPhoto = (ImageView) findViewById(R.id.img2);
+
         // initialise sensors
         accelerometer = new Accelerometer(this);
         magneticSensor = new MagneticSensor(this);
@@ -88,14 +102,42 @@ public class MainActivity extends AppCompatActivity {
 
         // link UI Components
         cameraFrame = (FrameLayout) findViewById(R.id.frameLayout);
-        cameraHeightValue = (TextView) findViewById(R.id.text_seek);
-        results = (TextView) findViewById(R.id.or);
-        angleValue = (TextView) findViewById(R.id.angleVal);
+        cameraHeightValue = (TextView) findViewById(R.id.gHL);
+        unexpectedAngle = (TextView) findViewById(R.id.uA);
+        angleValue = (TextView) findViewById(R.id.aV);
         onGroundSwitch = (Switch) findViewById(R.id.touchGround);
-        calibrateCameraHeight = (SeekBar) findViewById(R.id.seekBar);
+        calibrateCameraHeight = (SeekBar) findViewById(R.id.gHSB);
         calibrateCameraHeight.setProgress(160);
-        centrePoint = (ImageView) findViewById(R.id.crosshair);
+        centrePoint = (ImageView) findViewById(R.id.obRef);
+        angleLabel = (TextView) findViewById(R.id.aL);
+
+        captureButton = (Button) findViewById(R.id.saveButton);
+        captureButton.setEnabled(false);
+
+        width1 = (TextView) findViewById(R.id.pic1w);
+        height1 = (TextView) findViewById(R.id.pic1h);
+        area1 = (TextView) findViewById(R.id.pic1a);
+
+        width2 = (TextView) findViewById(R.id.pic2w);
+        height2 = (TextView) findViewById(R.id.pic2h);
+        area2 = (TextView) findViewById(R.id.pic2a);
+
+        volumeButton = (Button) findViewById(R.id.volButton);
+        volumeButton.setVisibility(View.INVISIBLE);
+
+        volume = (TextView) findViewById(R.id.picVol);
+
+        angleLabel.setTextColor(Color.GREEN);
+        angleLabel.setText("Tilt your phone frontwards/downwards.\nPoint the dot at the ground and tap.");
+
+        choosePic = (RadioGroup) findViewById(R.id.selectPic);
+        chosePic1 = (RadioButton) findViewById(R.id.pic1);
+        chosePic2 = (RadioButton) findViewById(R.id.pic2);
+
+
     }
+
+
 
     public void initCamera(){
         camera = android.hardware.Camera.open();
@@ -119,15 +161,45 @@ public class MainActivity extends AppCompatActivity {
                 rightObAngle = 0;
 
                 // Set results text to empty
-                results.setText("");
+                unexpectedAngle.setText("");
 
                 // Reset calculated result values
                 objectGroundHeight = 0;
                 objectHeight = 0;
                 objectDistance = 0;
+                objectWidth = 0;
 
                 // Reset color filter for centre point
                 centrePoint.clearColorFilter();
+                //set save button invisible
+                captureButton.setEnabled(false);
+                width1.setText("");
+                height1.setText("");
+                area1.setText("");
+                width2.setText("");
+                height2.setText("");
+                area2.setText("");
+                volumeButton.setVisibility(View.INVISIBLE);
+                volume.setText("");
+
+                // reset image thumbnails
+                firstPhoto.setImageResource(0);
+                secondPhoto.setImageResource(0);
+
+                //current image resets
+                chosePic1.setChecked(true);
+                chosePic2.setChecked(false);
+
+                angleLabel.setTextColor(Color.GREEN);
+                if (!onGroundSwitch.isChecked()) {
+                    angleLabel.setText("Tilt your phone frontwards/downwards.\nPoint the dot at the ground and tap.");
+                } else {
+                    angleLabel.setText("Tilt your phone frontwards/downwards.\nPoint the dot at the bottom of the object and tap");
+                }
+
+                centrePoint.setVisibility(View.VISIBLE);
+                onGroundSwitch.setEnabled(true);
+
             }
         });
 
@@ -142,6 +214,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onMagneticFieldChanged(float[] values) {
                 geomagnetic = values.clone();
+                //sideGeomagnetic = new float[]{values[2], values[0], values[1]};
                 updateOrientation();
             }
         });
@@ -150,16 +223,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTranslation(float [] values) {
                 gravity = values.clone();
+                //sideGravity = new float[]{values[0], values[1], values[2]};
                 updateOrientation();
             }
         });
+
 
         calibrateCameraHeight.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 cameraHeightFromGround = i;
                 cameraHeightFromGround = cameraHeightFromGround / 100;
-                cameraHeightValue.setText("height from ground = " + String.valueOf(i) + " CM");
+                cameraHeightValue.setText("H = " + cameraHeightFromGround + "m");
             }
 
             @Override
@@ -176,10 +251,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if (onGroundSwitch.isChecked())
+                if (onGroundSwitch.isChecked()) {
                     onGroundSwitch.setText("On Ground");
-                else
+                    angleLabel.setText("Tilt your phone frontwards/downwards.\nPoint the dot at the bottom of the object and tap");
+                }
+                else {
                     onGroundSwitch.setText("Above Ground");
+                    angleLabel.setText("Tilt your phone frontwards/downwards.\nPoint the dot at the ground and tap.");
+                }
+            }
+        });
+
+        choosePic.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if(checkedId == R.id.pic1) {
+                    current = 1;
+                } else if (checkedId == R.id.pic2) {
+                    current = 2;
+                }
             }
         });
     }
@@ -188,9 +278,11 @@ public class MainActivity extends AppCompatActivity {
         if (geomagnetic != null && gravity != null) {
             SensorManager.getRotationMatrix(RR, null, gravity, geomagnetic);
             SensorManager.getOrientation(RR, orientation);
-            angleValue.setText("x: " + String.format("%.1f",convertToDegrees(orientation[1])) + " y: " + String.format("%.1f",convertToDegrees(orientation[2])));
+            angleValue.setText("z: " + String.format("%.0f",Math.toDegrees(orientation[0])) + "\nx: " + String.format("%.0f",Math.toDegrees(orientation[1])) + "\ny: " + String.format("%.0f",Math.toDegrees(orientation[2])));
+
         }
     }
+
 
     public double convertToDegrees(float orientation) {
         double degrees = Math.toDegrees(orientation) % 360 + 90;
@@ -205,19 +297,28 @@ public class MainActivity extends AppCompatActivity {
     }
     
     void getAngles() {
-        // get angle values for ground, bottom object and top object
+        // get angle values for ground, bottom object, top object (pitch)
+        // get angle values for left object and right object (roll)
+        onGroundSwitch.setEnabled(false);
+        chosePic1.setEnabled(false);
+        chosePic2.setEnabled(false);
         if (!onGroundSwitch.isChecked() && groundAngle == 0) {
             groundAngle = convertToDegrees(orientation[1]);
             centrePoint.setColorFilter(Color.BLUE);
+            angleLabel.setTextColor(Color.BLUE);
+            angleLabel.setText("Tilt your phone frontwards/downwards.\nPoint the dot at the bottom of the object and tap");
         }
         else if (botObAngle == 0) {
             botObAngle = convertToDegrees(orientation[1]);
             centrePoint.setColorFilter(Color.RED);
+            angleLabel.setTextColor(Color.RED);
+            angleLabel.setText("Tilt your phone frontwards/downwards.\nPoint the dot at the top of the object and tap");
         }
         else if (topObAngle == 0) {
             topObAngle = convertToDegrees(orientation[1]);
             centrePoint.setColorFilter(Color.YELLOW);
-
+            angleLabel.setTextColor(Color.YELLOW);
+            angleLabel.setText("Tilt your phone sideways.\nPoint the dot on the left side of the object and tap");
             // Calibrate Angle Values
             calibrateAngleValues();
 
@@ -227,11 +328,16 @@ public class MainActivity extends AppCompatActivity {
             else
                 measureObjectOnGround();
         } else if (leftObAngle == 0) {
-            leftObAngle = adjust_angle_rotation(Math.toDegrees(orientation[2]) % 360 + 90);
+            leftObAngle = adjust_angle_rotation(Math.toDegrees(orientation[2]));
             centrePoint.setColorFilter(Color.MAGENTA);
+            angleLabel.setTextColor(Color.MAGENTA);
+            angleLabel.setText("Tilt your phone sideways.\nPoint the dot on the right side of the object and tap");
         } else if (rightObAngle == 0) {
-            rightObAngle = adjust_angle_rotation(Math.toDegrees(orientation[2]) % 360 + 90);
+            rightObAngle = adjust_angle_rotation(Math.toDegrees(orientation[2]));
             centrePoint.clearColorFilter();
+            centrePoint.setVisibility(View.INVISIBLE);
+            angleLabel.setTextColor(Color.WHITE);
+            angleLabel.setText("Save your image results or reset your measurements");
             // calibrate values. Left angle should always be greater than right angle
             double temp = leftObAngle;
             if (leftObAngle < rightObAngle) {
@@ -239,14 +345,68 @@ public class MainActivity extends AppCompatActivity {
                 rightObAngle = temp;
             }
             measureObjectWidth();
+            captureButton.setEnabled(true);
+            // make save enabled
         }
+    }
+
+
+    public void captureImage(View v){
+        if (camera != null) {
+            camera.takePicture(null, null, mPictureCallback);
+            saveAndCalculateArea();
+            // if current image is back at one, it means both areas has been calculated
+            // upon saving this image taken.
+            if (!area1.getText().toString().equals("") && !area2.getText().toString().equals("")) {
+                volumeButton.setVisibility(View.VISIBLE);
+            }
+            angleLabel.setTextColor(Color.GREEN);
+            if (!onGroundSwitch.isChecked()) {
+                angleLabel.setText("Tilt your phone frontwards/downwards.\nPoint the dot at the ground and tap.");
+            } else {
+                angleLabel.setText("Tilt your phone frontwards/downwards.\nPoint the dot at the bottom of the object and tap");
+            }
+            chosePic1.setEnabled(true);
+            chosePic2.setEnabled(true);
+            onGroundSwitch.setEnabled(true);
+            captureButton.setEnabled(false);
+            centrePoint.setVisibility(View.VISIBLE);
+
+            groundAngle = 0;
+            botObAngle = 0;
+            topObAngle = 0;
+            rightObAngle = 0;
+            leftObAngle = 0;
+        }
+    }
+
+    public void calculateVolume(View v) {
+        volume.setText("Volume = " + areaTextToDouble(area1.getText().toString()) * areaTextToDouble(area2.getText().toString()) + "m³");
+    }
+
+    public double areaTextToDouble(String areaInText) {
+        String text = areaInText.replace("A:", "");
+        text = text.replace("m²", "");
+        return Double.parseDouble(text);
 
 
     }
 
+    public void saveAndCalculateArea() {
+        if (chosePic1.isChecked()) {
+            width1.setText("H: " + String.format("%.2f", objectHeight) + "m");
+            height1.setText("W: " + String.format("%.2f", objectWidth) + "m");
+            area1.setText("A: " + String.format("%.2f", objectHeight * objectWidth) + "m²");
+        } else if (chosePic2.isChecked()) {
+            width2.setText("H: " + String.format("%.2f", objectHeight) + "m");
+            height2.setText("W: " + String.format("%.2f", objectWidth) + "m");
+            area2.setText("A: " + String.format("%.2f", objectHeight * objectWidth) + "m²");
+        }
+    }
+
     public void measureObjectWidth() {
+        //right - negative, left - positive
         objectWidth = (objectDistance * getTanFromDegrees(Math.abs(leftObAngle))) + (objectDistance * getTanFromDegrees(Math.abs(rightObAngle)));
-        results.append("\n Object width: " + String.format("%.2f", objectWidth) + "m");
     }
 
     double adjust_angle_rotation(double angle) {
@@ -280,6 +440,9 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 // pos and neg values aren't adding up to 3
             }
+            // sort again - auto assign
+            Arrays.sort(tempArr);
+
             groundAngle = tempArr[2];
             botObAngle = tempArr[1];
             topObAngle = tempArr[0];
@@ -327,57 +490,43 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void measureObjectOnGround() {
-        // Object touches ground and is above eye level
-        if (botObAngle > 0 && topObAngle < 0) {
-            objectDistance = cameraHeightFromGround * getTanFromDegrees(90 - Math.abs(botObAngle) - Math.abs(topObAngle));
-            objectHeight = objectDistance * getTanFromDegrees(Math.abs(topObAngle)) + cameraHeightFromGround;
-            // show results
-            displayResults();
-        // Object touches ground and is below eye level
-        } else if (botObAngle > 0 && topObAngle > 0) {
+        if (botObAngle < 0) {
+            // Bottom Object value should have a positive value (pointing downwards)
+            unexpectedAngle.setText("Unexpected Bottom Object Angle Value");
+        } else if (topObAngle < 0) {
+            // Object touches ground and is above eye level
             objectDistance = cameraHeightFromGround * getTanFromDegrees(90 - Math.abs(botObAngle));
+            objectHeight = objectDistance * getTanFromDegrees(Math.abs(topObAngle)) + cameraHeightFromGround;
+        } else if (topObAngle > 0) {
+            // Object touches ground and is below eye level
+            objectDistance = cameraHeightFromGround * getTanFromDegrees(90 - Math.abs(botObAngle) - Math.abs(topObAngle));
             objectHeight = cameraHeightFromGround - (objectDistance * getTanFromDegrees(Math.abs(topObAngle)));
-            // show results
-            displayResults();
-        } else {
-            // Unexpected Input
-            results.setText("Unexpected Input");
         }
     }
 
     public void measureObjectAboveGround() {
-        // Object doesn't touch ground and is above eye level
-        if (groundAngle > 0 && botObAngle < 0 && topObAngle < 0) {
+        if (groundAngle < 0) {
+            // Ground angle should have a positive value (pointing downwards)
+            unexpectedAngle.setText("Unexpected Ground Angle Value");
+        } else if (botObAngle < 0 && topObAngle < 0) {
+            // Object doesn't touch ground and is above eye level
             objectDistance = cameraHeightFromGround * (getTanFromDegrees(90 - Math.abs(groundAngle)));
             objectGroundHeight = cameraHeightFromGround + (objectDistance * getTanFromDegrees(Math.abs(botObAngle)));
             objectHeight = (objectDistance * getTanFromDegrees(Math.abs(topObAngle) + Math.abs(botObAngle))) - (objectDistance * getTanFromDegrees(Math.abs(botObAngle)));
-            // show results
-            displayResults();
-        // Object doesn't touch ground and is below eye level
-        } else if (groundAngle > 0 && botObAngle > 0 && topObAngle > 0) {
+        } else if (botObAngle > 0 && topObAngle > 0) {
+            // Object doesn't touch ground and is below eye level
             objectDistance = cameraHeightFromGround * getTanFromDegrees(90 - Math.abs(groundAngle) - Math.abs(botObAngle) - Math.abs(topObAngle));
             objectHeight = (objectDistance * getTanFromDegrees(Math.abs(botObAngle) + Math.abs(topObAngle))) - (objectDistance * getTanFromDegrees(Math.abs(topObAngle)));
             objectGroundHeight = cameraHeightFromGround - objectHeight - (objectDistance * getTanFromDegrees(Math.abs(topObAngle)));
-            // show results
-            displayResults();
-        // Object doesn't touch ground and is on eye level
-        } else if (groundAngle < 0 && botObAngle > 0 && topObAngle < 0) {
+        } else if (botObAngle > 0 && topObAngle < 0) {
+            // Object doesn't touch ground and is on eye level
             objectDistance = cameraHeightFromGround * getTanFromDegrees(90 - Math.abs(groundAngle));
             objectGroundHeight = cameraHeightFromGround - (objectDistance * getTanFromDegrees(Math.abs(botObAngle)));
             objectHeight = (objectDistance *  getTanFromDegrees(Math.abs(botObAngle))) + (objectDistance *  getTanFromDegrees(Math.abs(topObAngle)));
-            // show results
-            displayResults();
-        } else {
-            // Unexpected Input
-            results.setText("Unexpected Input");
         }
-    }
-
-    public void displayResults() {
-        results.setText("Object Distance: " + String.format("%.2f",objectDistance) + "m\n Object Height: " + String.format("%.2f", objectHeight) + "m");
-        if (objectGroundHeight > 0) {
-            results.append("\nObject Ground Height: " + String.format("%.2f", objectGroundHeight) + "m");
-        }
+        // An else statement will only trigger if botObAngle is less than 0 and topObAngle is greater
+        // than 0. However, because of auto-sort, botObAngle will never be less than topObAngle
+        // so this predicate shouldn't happen.
     }
 
     @Override
@@ -394,26 +543,17 @@ public class MainActivity extends AppCompatActivity {
         magneticSensor.unregister();
     }
 
-    public void captureImage(View v){
-        if (camera != null) {
-            camera.takePicture(null, null, mPictureCallback);
-        }
-    }
-
     Camera.PictureCallback mPictureCallback = new Camera.PictureCallback() {
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
-            ImageView firstPhoto = (ImageView) findViewById(R.id.img1);
-            ImageView secondPhoto = (ImageView) findViewById(R.id.img2);
-
             Bitmap capturedImage = BitmapFactory.decodeByteArray(data, 0, data.length);
 
-            if (current == 1) {
+            if (chosePic1.isChecked()) {
                 firstPhoto.setImageBitmap(capturedImage);
-                current = 2;
-            } else {
+                chosePic2.setChecked(true);
+            } else if (chosePic2.isChecked()) {
                 secondPhoto.setImageBitmap(capturedImage);
-                current = 1;
+                chosePic1.setChecked(true);
             }
         }
 
