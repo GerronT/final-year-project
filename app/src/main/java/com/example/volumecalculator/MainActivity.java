@@ -1,18 +1,12 @@
 package com.example.volumecalculator;
 
 import android.hardware.Camera;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.widget.*;
 import android.view.*;
 import android.graphics.*;
-import android.media.*;
-
-import org.w3c.dom.Text;
 
 import java.util.Arrays;
 
@@ -68,16 +62,6 @@ public class MainActivity extends AppCompatActivity {
         initVars();
         initCamera();
         initListeners();
-
-        //get the spinner from the xml.
-        /*Spinner dropdown = findViewById(R.id.objectType);
-        //create a list of items for the spinner.
-        String[] items = new String[]{"3D Equilateral", "3D Sphere", "3D Triangular", "2D Equilateral", "2D Circular", "2D Triangular"};
-        //create an adapter to describe how the items are displayed, adapters are used in several places in android.
-        //There are multiple variations of this, but this is the basic variant.
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
-        //set the spinners adapter to the previously created one.
-        dropdown.setAdapter(adapter);*/
     }
 
     public void initVars(){
@@ -123,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         area2 = (TextView) findViewById(R.id.pic2a);
 
         volumeButton = (Button) findViewById(R.id.volButton);
-        volumeButton.setVisibility(View.INVISIBLE);
+        volumeButton.setEnabled(false);
 
         volume = (TextView) findViewById(R.id.picVol);
 
@@ -148,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
     public void initListeners() {
         // Button to reset the process and take another measurement
         // Declare and initialise reset button
-        final ImageButton resetBtn = (ImageButton) findViewById(R.id.resetButton);
+        final Button resetBtn = (Button) findViewById(R.id.resetButton);
         resetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -173,22 +157,27 @@ public class MainActivity extends AppCompatActivity {
                 centrePoint.clearColorFilter();
                 //set save button invisible
                 captureButton.setEnabled(false);
-                width1.setText("");
-                height1.setText("");
-                area1.setText("");
-                width2.setText("");
-                height2.setText("");
-                area2.setText("");
-                volumeButton.setVisibility(View.INVISIBLE);
-                volume.setText("");
 
-                // reset image thumbnails
-                firstPhoto.setImageResource(0);
-                secondPhoto.setImageResource(0);
 
-                //current image resets
-                chosePic1.setChecked(true);
-                chosePic2.setChecked(false);
+                volumeButton.setEnabled(false);
+                volume.setText("Volume:");
+
+                // reset one of the image thumbnails
+                if (chosePic1.isChecked()) {
+                    firstPhoto.setImageResource(0);
+                    width1.setText("Width:");
+                    height1.setText("Height:");
+                    area1.setText("Area:");
+                } else if (chosePic2.isChecked()) {
+                    secondPhoto.setImageResource(0);
+                    width2.setText("Width:");
+                    height2.setText("Height");
+                    area2.setText("Area:");
+                }
+
+                //Enable choosing dimensions again
+                chosePic1.setEnabled(true);
+                chosePic2.setEnabled(true);
 
                 angleLabel.setTextColor(Color.GREEN);
                 if (!onGroundSwitch.isChecked()) {
@@ -278,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
         if (geomagnetic != null && gravity != null) {
             SensorManager.getRotationMatrix(RR, null, gravity, geomagnetic);
             SensorManager.getOrientation(RR, orientation);
-            angleValue.setText("z: " + String.format("%.0f",Math.toDegrees(orientation[0])) + "\nx: " + String.format("%.0f",Math.toDegrees(orientation[1])) + "\ny: " + String.format("%.0f",Math.toDegrees(orientation[2])));
+            angleValue.setText("fA: " + String.format("%.0f",convertToDegrees(orientation[1])) + "°\nsA: " + String.format("%.0f",Math.toDegrees(orientation[2])) + "°");
 
         }
     }
@@ -357,8 +346,8 @@ public class MainActivity extends AppCompatActivity {
             saveAndCalculateArea();
             // if current image is back at one, it means both areas has been calculated
             // upon saving this image taken.
-            if (!area1.getText().toString().equals("") && !area2.getText().toString().equals("")) {
-                volumeButton.setVisibility(View.VISIBLE);
+            if (!area1.getText().toString().equals("Area:") && !area2.getText().toString().equals("Area:")) {
+                volumeButton.setEnabled(true);
             }
             angleLabel.setTextColor(Color.GREEN);
             if (!onGroundSwitch.isChecked()) {
@@ -381,12 +370,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void calculateVolume(View v) {
-        volume.setText("Volume = " + areaTextToDouble(area1.getText().toString()) * areaTextToDouble(area2.getText().toString()) + "m³");
+        // get average height from two calculated measurements
+        double finalHeight = (areaTextToDouble(height1.getText().toString(), "Height:", "m") * areaTextToDouble(height2.getText().toString(), "Height:", "m") ) / 2;
+        // Get width of first dimension
+        double finalWidth = areaTextToDouble(width1.getText().toString(), "Width:", "m");
+        // Set second width as length
+        double finalLength = areaTextToDouble(width2.getText().toString(), "Width:", "m");
+        // Volume = H * W * L
+        volume.setText("Volume = " + String.format("%.3f", finalHeight * finalWidth * finalLength) + "m³");
     }
 
-    public double areaTextToDouble(String areaInText) {
-        String text = areaInText.replace("A:", "");
-        text = text.replace("m²", "");
+    public double areaTextToDouble(String areaInText, String label, String unit) {
+        String text = areaInText.replace(label, "");
+        text = text.replace(unit, "");
         return Double.parseDouble(text);
 
 
@@ -394,13 +390,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void saveAndCalculateArea() {
         if (chosePic1.isChecked()) {
-            width1.setText("H: " + String.format("%.2f", objectHeight) + "m");
-            height1.setText("W: " + String.format("%.2f", objectWidth) + "m");
-            area1.setText("A: " + String.format("%.2f", objectHeight * objectWidth) + "m²");
+            width1.setText("Width: " + String.format("%.2f", objectHeight) + "m");
+            height1.setText("Height: " + String.format("%.2f", objectWidth) + "m");
+            area1.setText("Area: " + String.format("%.2f", objectHeight * objectWidth) + "m²");
         } else if (chosePic2.isChecked()) {
-            width2.setText("H: " + String.format("%.2f", objectHeight) + "m");
-            height2.setText("W: " + String.format("%.2f", objectWidth) + "m");
-            area2.setText("A: " + String.format("%.2f", objectHeight * objectWidth) + "m²");
+            width2.setText("Width: " + String.format("%.2f", objectHeight) + "m");
+            height2.setText("Height: " + String.format("%.2f", objectWidth) + "m");
+            area2.setText("Area: " + String.format("%.2f", objectHeight * objectWidth) + "m²");
         }
     }
 

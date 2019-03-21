@@ -28,15 +28,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/pic1h"
-        android:layout_width="77dp"
-        android:layout_height="20dp"
-        android:layout_marginStart="84dp"
-        android:layout_marginLeft="84dp"
-        android:layout_marginBottom="472dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/saveButton"
@@ -62,10 +53,10 @@
 
     <RadioGroup
         android:id="@+id/selectPic"
-        android:layout_width="76dp"
-        android:layout_height="66dp"
-        android:layout_marginStart="280dp"
-        android:layout_marginLeft="280dp"
+        android:layout_width="112dp"
+        android:layout_height="65dp"
+        android:layout_marginStart="240dp"
+        android:layout_marginLeft="240dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -73,50 +64,86 @@
             android:id="@+id/pic1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="pic1"
-            android:checked="true"/>
+            android:checked="true"
+            android:text="Dimension 1" />
 
         <RadioButton
             android:id="@+id/pic2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="pic2" />
+            android:text="Dimension 2" />
     </RadioGroup>
 
     <TextView
         android:id="@+id/pic1w"
-        android:layout_width="77dp"
-        android:layout_height="21dp"
-        android:layout_marginStart="84dp"
-        android:layout_marginLeft="84dp"
-        android:layout_marginBottom="496dp"
+        android:layout_width="100dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginLeft="80dp"
+        android:layout_marginBottom="505dp"
+        android:text="Width:"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/pic1h"
+        android:layout_width="100dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginLeft="80dp"
+        android:layout_marginBottom="480dp"
+        android:text="Height:"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/pic1a"
+        android:layout_width="100dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginLeft="80dp"
+        android:layout_marginBottom="455dp"
+        android:text="Area:"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/pic2w"
-        android:layout_width="76dp"
-        android:layout_height="18dp"
-        android:layout_marginStart="244dp"
-        android:layout_marginLeft="244dp"
-        android:layout_marginBottom="504dp"
+        android:layout_width="100dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="256dp"
+        android:layout_marginLeft="256dp"
+        android:layout_marginBottom="505dp"
+        android:text="Width:"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/pic2h"
-        android:layout_width="83dp"
-        android:layout_height="21dp"
-        android:layout_marginStart="248dp"
-        android:layout_marginLeft="248dp"
-        android:layout_marginBottom="472dp"
+        android:layout_width="100dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="256dp"
+        android:layout_marginLeft="256dp"
+        android:layout_marginBottom="480dp"
+        android:text="Height:"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/pic2a"
+        android:layout_width="100dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="256dp"
+        android:layout_marginLeft="256dp"
+        android:layout_marginBottom="455dp"
+        android:text="Area:"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/img1"
-        android:layout_width="78dp"
-        android:layout_height="74dp"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
         android:layout_marginStart="4dp"
         android:layout_marginLeft="4dp"
         android:layout_marginBottom="448dp"
@@ -126,30 +153,19 @@
 
     <ImageView
         android:id="@+id/img2"
-        android:layout_width="73dp"
+        android:layout_width="75dp"
         android:layout_height="75dp"
-        android:layout_marginStart="168dp"
-        android:layout_marginLeft="168dp"
+        android:layout_marginStart="180dp"
+        android:layout_marginLeft="180dp"
         android:layout_marginBottom="448dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
-
-    <ImageButton
-        android:id="@+id/resetButton"
-        android:layout_width="39dp"
-        android:layout_height="29dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
 
     <Switch
         android:id="@+id/touchGround"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="110dp"
+        android:layout_height="38dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginBottom="528dp"
@@ -159,51 +175,32 @@
 
     <TextView
         android:id="@+id/gHL"
-        android:layout_width="81dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_width="67dp"
+        android:layout_height="27dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginBottom="124dp"
+        android:text="H = 1.62m"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/aV"
-        android:layout_width="62dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="64dp"
-        android:layout_marginLeft="64dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/pic1a"
-        android:layout_width="75dp"
-        android:layout_height="27dp"
+        android:layout_width="51dp"
+        android:layout_height="46dp"
         android:layout_marginStart="84dp"
         android:layout_marginLeft="84dp"
-        android:layout_marginBottom="444dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/pic2a"
-        android:layout_width="91dp"
-        android:layout_height="23dp"
-        android:layout_marginStart="248dp"
-        android:layout_marginLeft="248dp"
-        android:layout_marginBottom="448dp"
+        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/picVol"
-        android:layout_width="233dp"
-        android:layout_height="21dp"
-        android:layout_marginStart="112dp"
-        android:layout_marginLeft="112dp"
-        android:layout_marginBottom="412dp"
+        android:layout_width="186dp"
+        android:layout_height="23dp"
+        android:layout_marginStart="180dp"
+        android:layout_marginLeft="180dp"
+        android:layout_marginBottom="416dp"
         android:text="Volume: "
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -212,18 +209,20 @@
         android:id="@+id/volButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="396dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="405dp"
         android:onClick="calculateVolume"
-        android:text="get volume"
+        android:text="Calculate Volume"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/uA"
-        android:layout_width="171dp"
-        android:layout_height="25dp"
-        android:layout_marginStart="156dp"
-        android:layout_marginLeft="156dp"
+        android:layout_width="225dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="124dp"
+        android:layout_marginLeft="124dp"
         android:layout_marginBottom="528dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -237,6 +236,20 @@
         android:layout_marginBottom="64dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/resetButton"
+        android:layout_width="70dp"
+        android:layout_height="38dp"
+        android:text="Reset"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView" />
 
 
 </android.support.constraint.ConstraintLayout>
