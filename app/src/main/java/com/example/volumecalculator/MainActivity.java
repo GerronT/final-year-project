@@ -17,52 +17,42 @@ public class MainActivity extends AppCompatActivity {
     // Declare camera related objects
     private Camera camera;
     private ShowCamera showCamera;
-
-    //Photo thumbs
-    private ImageView firstPhoto, secondPhoto;
-
     // Declare an instance of each sensors
     private Accelerometer accelerometer;
     private MagneticSensor magneticSensor;
 
-    // Declaration of components required to calculate the device's orientation
-    private float[] geomagnetic, gravity; //sideGeomagnetic, sideGravity;
-    private float[] RR = new float[9], SR = new float[9], orientation = new float[3], sideOrientation = new float[3]; //QQ = new float[9], sideOrientation = new float[3];
-
     // Declaration of UI Components
-    private FrameLayout cameraFrame;
-    private TextView angleLabel, logReport, frontAngleValue, sideAngleValue, cameraHeightValue;
+    private FrameLayout cameraViewFrame;
+    private TextView instructionMessage, logReport, frontAngleValue, sideAngleValue, cameraHeightValue,
+            dimension1Width, dimension1Height, dimension1Area, dimension1Distance, dimension1GroundH,
+            dimension2Width, dimension2Height, dimension2Area, dimension2Distance, dimension2GroundH,
+            objectVolume;
+    private Button useButton, calculateVolumeButton, saveButton, takeButton;
     private SeekBar calibrateCameraHeight;
     private Switch onGroundSwitch;
-    private ImageView centrePoint;
-    private RadioGroup choosePic;
-    private RadioButton chosePic1, chosePic2;
+    private ImageView dimension1Thumb, dimension2Thumb, centrePoint;
+    private RadioGroup dimensionRadioGroup;
+    private RadioButton dimension1Select, dimension2Select;
     private RelativeLayout resultScreenshot;
 
-    // Declare angle variables
-    private double botObAngle, topObAngle, groundAngle;
+    // Declaration of angle measurements, calculated results and calibrated user input values
+    private double botObAngle, topObAngle, groundAngle, leftObAngle, rightObAngle,
+            objectWidth, objectHeight, objectDistance, objectGroundHeight,
+            cameraHeightFromGround,
+            horizontalAngleStart;
 
-    // Declare calculated results
-    private double objectDistance, objectHeight, objectGroundHeight;
-    private double horizontalAngleStart;
+    // Declaration of components required to calculate the device's orientation
+    private float[] geomagnetic, gravity;
+    private float[] RR = new float[9], SR = new float[9],
+            orientation = new float[3], sideOrientation = new float[3];
 
-    // Declare calibrated user input values
-    private double cameraHeightFromGround;
-
-    // extras
-    private double leftObAngle, rightObAngle;
-    private double objectWidth;
-
-    private Button captureButton, volumeButton, screenshotButton, takeAngleButton;
-    private TextView width1, height1, area1, distance1, groundH1, width2, height2, area2, distance2, groundH2, volume;
-
-    private int current = 1;
+    // Declaration of which dimension is being used.
+    private int current;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         initVars();
         initCamera();
         initListeners();
@@ -70,8 +60,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void initVars(){
         // Photo thumbnails
-        firstPhoto = (ImageView) findViewById(R.id.dim1Thumb);
-        secondPhoto = (ImageView) findViewById(R.id.dim2Thumb);
+        dimension1Thumb = (ImageView) findViewById(R.id.dim1Thumb);
+        dimension2Thumb = (ImageView) findViewById(R.id.dim2Thumb);
 
         // initialise sensors
         accelerometer = new Accelerometer(this);
@@ -85,52 +75,54 @@ public class MainActivity extends AppCompatActivity {
         leftObAngle = 0;
         rightObAngle = 0;
 
+        current = 1;
+
         // initialise camera height
         cameraHeightFromGround = 162 / 100;
 
         // link UI Components
-        cameraFrame = (FrameLayout) findViewById(R.id.camView);
+        cameraViewFrame = (FrameLayout) findViewById(R.id.camView);
         cameraHeightValue = (TextView) findViewById(R.id.grndHLbl);
         logReport = (TextView) findViewById(R.id.logTxt);
         frontAngleValue = (TextView) findViewById(R.id.frntAngle);
-        sideAngleValue = (TextView) findViewById(R.id.sA);
+        sideAngleValue = (TextView) findViewById(R.id.sideAngle);
         onGroundSwitch = (Switch) findViewById(R.id.onGrndSwtch);
         calibrateCameraHeight = (SeekBar) findViewById(R.id.grndHSB);
         calibrateCameraHeight.setProgress(160);
         calibrateCameraHeight.setMax(300);
         centrePoint = (ImageView) findViewById(R.id.objRef);
-        angleLabel = (TextView) findViewById(R.id.insMsg);
+        instructionMessage = (TextView) findViewById(R.id.insMsg);
         resultScreenshot = (RelativeLayout) findViewById(R.id.scrnShotView);
-        screenshotButton = (Button) findViewById(R.id.screenButton);
-        screenshotButton.setEnabled(false);
-        takeAngleButton = (Button) findViewById(R.id.tA);
+        saveButton = (Button) findViewById(R.id.saveBtn);
+        saveButton.setEnabled(false);
+        takeButton = (Button) findViewById(R.id.takeBtn);
 
-        captureButton = (Button) findViewById(R.id.useBtn);
-        captureButton.setEnabled(false);
+        useButton = (Button) findViewById(R.id.useBtn);
+        useButton.setEnabled(false);
 
-        width1 = (TextView) findViewById(R.id.dim1w);
-        height1 = (TextView) findViewById(R.id.dim1h);
-        area1 = (TextView) findViewById(R.id.dim1a);
-        distance1 = (TextView) findViewById(R.id.dim1d);
-        groundH1 = (TextView) findViewById(R.id.dim1g);
+        dimension1Width = (TextView) findViewById(R.id.dim1w);
+        dimension1Height = (TextView) findViewById(R.id.dim1h);
+        dimension1Area = (TextView) findViewById(R.id.dim1a);
+        dimension1Distance = (TextView) findViewById(R.id.dim1d);
+        dimension1GroundH = (TextView) findViewById(R.id.dim1g);
 
-        width2 = (TextView) findViewById(R.id.dim2w);
-        height2 = (TextView) findViewById(R.id.dim2h);
-        area2 = (TextView) findViewById(R.id.dim2a);
-        distance2 = (TextView) findViewById(R.id.dim2d);
-        groundH2 = (TextView) findViewById(R.id.dim2g);
+        dimension2Width = (TextView) findViewById(R.id.dim2w);
+        dimension2Height = (TextView) findViewById(R.id.dim2h);
+        dimension2Area = (TextView) findViewById(R.id.dim2a);
+        dimension2Distance = (TextView) findViewById(R.id.dim2d);
+        dimension2GroundH = (TextView) findViewById(R.id.dim2g);
 
-        volumeButton = (Button) findViewById(R.id.calcVolBtn);
-        volumeButton.setEnabled(false);
+        calculateVolumeButton = (Button) findViewById(R.id.calcVolBtn);
+        calculateVolumeButton.setEnabled(false);
 
-        volume = (TextView) findViewById(R.id.objVol);
+        objectVolume = (TextView) findViewById(R.id.objVol);
 
-        angleLabel.setTextColor(Color.GREEN);
-        angleLabel.setText("Tilt your phone frontwards/downwards. Point the dot at the ground and tap it or press take.");
+        instructionMessage.setTextColor(Color.GREEN);
+        instructionMessage.setText("Tilt your phone frontwards/downwards. Point the dot at the ground and tap it or press take.");
 
-        choosePic = (RadioGroup) findViewById(R.id.dimSelect);
-        chosePic1 = (RadioButton) findViewById(R.id.dim1);
-        chosePic2 = (RadioButton) findViewById(R.id.dim2);
+        dimensionRadioGroup = (RadioGroup) findViewById(R.id.dimSelect);
+        dimension1Select = (RadioButton) findViewById(R.id.dim1);
+        dimension2Select = (RadioButton) findViewById(R.id.dim2);
 
         horizontalAngleStart = 0;
         frontAngleValue.setVisibility(View.VISIBLE);
@@ -140,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
     public void initCamera(){
         camera = android.hardware.Camera.open();
         showCamera = new ShowCamera(this, camera);
-        cameraFrame.addView(showCamera);
+        cameraViewFrame.addView(showCamera);
     }
 
     public void initListeners() {
@@ -170,53 +162,53 @@ public class MainActivity extends AppCompatActivity {
                 // Reset color filter for centre point
                 centrePoint.clearColorFilter();
                 //set save button invisible
-                captureButton.setEnabled(false);
+                useButton.setEnabled(false);
 
 
-                volumeButton.setEnabled(false);
-                volume.setText("Volume:");
+                calculateVolumeButton.setEnabled(false);
+                objectVolume.setText("Volume:");
 
                 // reset one of the image thumbnails
-                if (chosePic1.isChecked()) {
-                    firstPhoto.setImageResource(0);
-                    width1.setText("Width:");
-                    height1.setText("Height:");
-                    area1.setText("Area:");
-                    distance1.setText("Dist:");
-                    groundH1.setText("GrndH:");
-                } else if (chosePic2.isChecked()) {
-                    secondPhoto.setImageResource(0);
-                    width2.setText("Width:");
-                    height2.setText("Height");
-                    area2.setText("Area:");
-                    distance2.setText("Dist:");
-                    groundH2.setText("GrndH:");
+                if (dimension1Select.isChecked()) {
+                    dimension1Thumb.setImageResource(0);
+                    dimension1Width.setText("Width:");
+                    dimension1Height.setText("Height:");
+                    dimension1Area.setText("Area:");
+                    dimension1Distance.setText("Dist:");
+                    dimension1GroundH.setText("GrndH:");
+                } else if (dimension2Select.isChecked()) {
+                    dimension2Thumb.setImageResource(0);
+                    dimension2Width.setText("Width:");
+                    dimension2Height.setText("Height");
+                    dimension2Area.setText("Area:");
+                    dimension2Distance.setText("Dist:");
+                    dimension2GroundH.setText("GrndH:");
                 }
 
                 //Enable choosing dimensions again
-                chosePic1.setEnabled(true);
-                chosePic2.setEnabled(true);
+                dimension1Select.setEnabled(true);
+                dimension2Select.setEnabled(true);
 
-                angleLabel.setTextColor(Color.GREEN);
+                instructionMessage.setTextColor(Color.GREEN);
                 if (!onGroundSwitch.isChecked()) {
-                    angleLabel.setText("Tilt your phone frontwards/downwards. Point the dot at the ground and tap it or press take.");
+                    instructionMessage.setText("Tilt your phone frontwards/downwards. Point the dot at the ground and tap it or press take.");
                 } else {
-                    angleLabel.setText("Tilt your phone frontwards/downwards. Point the dot at the bottom of the object and tap it or press take.");
+                    instructionMessage.setText("Tilt your phone frontwards/downwards. Point the dot at the bottom of the object and tap it or press take.");
                 }
 
 
                 centrePoint.setVisibility(View.VISIBLE);
-                takeAngleButton.setEnabled(true);
+                takeButton.setEnabled(true);
                 onGroundSwitch.setEnabled(true);
                 calibrateCameraHeight.setEnabled(true);
                 frontAngleValue.setVisibility(View.VISIBLE);
                 sideAngleValue.setVisibility(View.INVISIBLE);
                 horizontalAngleStart = 0;
 
-                if (firstPhoto.getDrawable() != null || secondPhoto.getDrawable() != null) {
-                    screenshotButton.setEnabled(true);
+                if (dimension1Thumb.getDrawable() != null || dimension2Thumb.getDrawable() != null) {
+                    saveButton.setEnabled(true);
                 } else {
-                    screenshotButton.setEnabled(false);
+                    saveButton.setEnabled(false);
                 }
 
             }
@@ -273,16 +265,16 @@ public class MainActivity extends AppCompatActivity {
 
                 if (onGroundSwitch.isChecked()) {
                     onGroundSwitch.setText("On Ground");
-                    angleLabel.setText("Tilt your phone frontwards/downwards. Point the dot at the bottom of the object and tap it or press take.");
+                    instructionMessage.setText("Tilt your phone frontwards/downwards. Point the dot at the bottom of the object and tap it or press take.");
                 }
                 else {
                     onGroundSwitch.setText("Above Ground");
-                    angleLabel.setText("Tilt your phone frontwards/downwards. Point the dot at the ground and tap it or press take.");
+                    instructionMessage.setText("Tilt your phone frontwards/downwards. Point the dot at the ground and tap it or press take.");
                 }
             }
         });
 
-        choosePic.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        dimensionRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if(checkedId == R.id.dim1) {
@@ -367,25 +359,25 @@ public class MainActivity extends AppCompatActivity {
         // get angle values for left object and right object (roll)
         onGroundSwitch.setEnabled(false);
         calibrateCameraHeight.setEnabled(false);
-        chosePic1.setEnabled(false);
-        chosePic2.setEnabled(false);
+        dimension1Select.setEnabled(false);
+        dimension1Select.setEnabled(false);
         if (!onGroundSwitch.isChecked() && groundAngle == 0) {
             groundAngle = convertToDegrees(orientation[1]);
             centrePoint.setColorFilter(Color.BLUE);
-            angleLabel.setTextColor(Color.BLUE);
-            angleLabel.setText("Tilt your phone frontwards/downwards. Point the dot at the bottom of the object and tap it or press take.");
+            instructionMessage.setTextColor(Color.BLUE);
+            instructionMessage.setText("Tilt your phone frontwards/downwards. Point the dot at the bottom of the object and tap it or press take.");
         }
         else if (botObAngle == 0) {
             botObAngle = convertToDegrees(orientation[1]);
             centrePoint.setColorFilter(Color.RED);
-            angleLabel.setTextColor(Color.RED);
-            angleLabel.setText("Tilt your phone frontwards/downwards. Point the dot at the top of the object and tap it or press take.");
+            instructionMessage.setTextColor(Color.RED);
+            instructionMessage.setText("Tilt your phone frontwards/downwards. Point the dot at the top of the object and tap it or press take.");
         }
         else if (topObAngle == 0) {
             topObAngle = convertToDegrees(orientation[1]);
             centrePoint.setColorFilter(Color.YELLOW);
-            angleLabel.setTextColor(Color.YELLOW);
-            angleLabel.setText("Tilt your phone sideways. Point the dot on the left side of the object and tap it or press take.");
+            instructionMessage.setTextColor(Color.YELLOW);
+            instructionMessage.setText("Tilt your phone sideways. Point the dot on the left side of the object and tap it or press take.");
             horizontalAngleStart = Math.toDegrees(sideOrientation[0]);
             frontAngleValue.setVisibility(View.INVISIBLE);
             sideAngleValue.setVisibility(View.VISIBLE);
@@ -402,14 +394,14 @@ public class MainActivity extends AppCompatActivity {
         } else if (leftObAngle == 0) {
             leftObAngle = sortYAngle(Math.toDegrees(sideOrientation[0]) - horizontalAngleStart);
             centrePoint.setColorFilter(Color.MAGENTA);
-            angleLabel.setTextColor(Color.MAGENTA);
-            angleLabel.setText("Tilt your phone sideways. Point the dot on the right side of the object and tap it or press take.");
+            instructionMessage.setTextColor(Color.MAGENTA);
+            instructionMessage.setText("Tilt your phone sideways. Point the dot on the right side of the object and tap it or press take.");
         } else if (rightObAngle == 0) {
             rightObAngle = sortYAngle(Math.toDegrees(sideOrientation[0]) - horizontalAngleStart);
             centrePoint.clearColorFilter();
             centrePoint.setVisibility(View.INVISIBLE);
-            angleLabel.setTextColor(Color.WHITE);
-            angleLabel.setText("Save your image results or reset your measurements or press take.");
+            instructionMessage.setTextColor(Color.WHITE);
+            instructionMessage.setText("Save your image results or reset your measurements or press take.");
             // calibrate values. Left angle should always be greater than right angle
             double temp = leftObAngle;
             if (leftObAngle < rightObAngle) {
@@ -417,9 +409,9 @@ public class MainActivity extends AppCompatActivity {
                 rightObAngle = temp;
             }
             measureObjectWidth();
-            captureButton.setEnabled(true);
+            useButton.setEnabled(true);
             sideAngleValue.setVisibility(View.INVISIBLE);
-            takeAngleButton.setEnabled(false);
+            takeButton.setEnabled(false);
             // make save enabled
         }
     }
@@ -431,23 +423,23 @@ public class MainActivity extends AppCompatActivity {
             saveAndCalculateArea();
             // if current image is back at one, it means both areas has been calculated
             // upon saving this image taken.
-            if (!area1.getText().toString().equals("Area:") && !area2.getText().toString().equals("Area:")) {
-                volumeButton.setEnabled(true);
+            if (!dimension1Area.getText().toString().equals("Area:") && !dimension2Area.getText().toString().equals("Area:")) {
+                calculateVolumeButton.setEnabled(true);
             }
-            angleLabel.setTextColor(Color.GREEN);
+            instructionMessage.setTextColor(Color.GREEN);
             if (!onGroundSwitch.isChecked()) {
-                angleLabel.setText("Tilt your phone frontwards/downwards. Point the dot at the ground and tap it or press take.");
+                instructionMessage.setText("Tilt your phone frontwards/downwards. Point the dot at the ground and tap it or press take.");
             } else {
-                angleLabel.setText("Tilt your phone frontwards/downwards. Point the dot at the bottom of the object and tap it or press take.");
+                instructionMessage.setText("Tilt your phone frontwards/downwards. Point the dot at the bottom of the object and tap it or press take.");
             }
-            chosePic1.setEnabled(true);
-            chosePic2.setEnabled(true);
+            dimension1Select.setEnabled(true);
+            dimension2Select.setEnabled(true);
             onGroundSwitch.setEnabled(true);
             calibrateCameraHeight.setEnabled(true);
-            captureButton.setEnabled(false);
+            useButton.setEnabled(false);
             centrePoint.setVisibility(View.VISIBLE);
-            takeAngleButton.setEnabled(true);
-            screenshotButton.setEnabled(true);
+            takeButton.setEnabled(true);
+            saveButton.setEnabled(true);
             frontAngleValue.setVisibility(View.VISIBLE);
 
             groundAngle = 0;
@@ -465,43 +457,41 @@ public class MainActivity extends AppCompatActivity {
 
     public void calculateVolume(View v) {
         // get average height from two calculated measurements
-        double finalHeight = (areaTextToDouble(height1.getText().toString(), "Height:", "m") * areaTextToDouble(height2.getText().toString(), "Height:", "m") ) / 2;
+        double finalHeight = (areaTextToDouble(dimension1Height.getText().toString(), "Height:", "m") * areaTextToDouble(dimension2Height.getText().toString(), "Height:", "m") ) / 2;
         // Get width of first dimension
-        double finalWidth = areaTextToDouble(width1.getText().toString(), "Width:", "m");
+        double finalWidth = areaTextToDouble(dimension1Width.getText().toString(), "Width:", "m");
         // Set second width as length
-        double finalLength = areaTextToDouble(width2.getText().toString(), "Width:", "m");
+        double finalLength = areaTextToDouble(dimension2Width.getText().toString(), "Width:", "m");
         // Volume = H * W * L
-        volume.setText("Volume = " + String.format("%.9f", finalHeight * finalWidth * finalLength) + "m³");
+        objectVolume.setText("Volume = " + String.format("%.9f", finalHeight * finalWidth * finalLength) + "m³");
     }
 
     public double areaTextToDouble(String areaInText, String label, String unit) {
         String text = areaInText.replace(label, "");
         text = text.replace(unit, "");
         return Double.parseDouble(text);
-
-
     }
 
     public void saveAndCalculateArea() {
-        if (chosePic1.isChecked()) {
-            width1.setText("Width: " + String.format("%.2f", objectWidth) + "m");
-            height1.setText("Height: " + String.format("%.2f", objectHeight) + "m");
-            area1.setText("Area: " + String.format("%.2f", objectHeight * objectWidth) + "m²");
-            distance1.setText("Dist: " + String.format("%.2f", objectDistance) + "m");
+        if (dimension1Select.isChecked()) {
+            dimension1Width.setText("Width: " + String.format("%.2f", objectWidth) + "m");
+            dimension1Height.setText("Height: " + String.format("%.2f", objectHeight) + "m");
+            dimension1Area.setText("Area: " + String.format("%.2f", objectHeight * objectWidth) + "m²");
+            dimension1Distance.setText("Dist: " + String.format("%.2f", objectDistance) + "m");
             if (objectGroundHeight > 0) {
-                groundH1.setText("GrndH: " + String.format("%.2f", objectGroundHeight) + "m");
+                dimension1GroundH.setText("GrndH: " + String.format("%.2f", objectGroundHeight) + "m");
             } else {
-                groundH1.setText("GrndH: N/A");
+                dimension1GroundH.setText("GrndH: N/A");
             }
-        } else if (chosePic2.isChecked()) {
-            width2.setText("Width: " + String.format("%.2f", objectWidth) + "m");
-            height2.setText("Height: " + String.format("%.2f", objectHeight) + "m");
-            area2.setText("Area: " + String.format("%.2f", objectHeight * objectWidth) + "m²");
-            distance2.setText("Dist: " + String.format("%.2f", objectDistance) + "m");
+        } else if (dimension2Select.isChecked()) {
+            dimension2Width.setText("Width: " + String.format("%.2f", objectWidth) + "m");
+            dimension2Height.setText("Height: " + String.format("%.2f", objectHeight) + "m");
+            dimension2Area.setText("Area: " + String.format("%.2f", objectHeight * objectWidth) + "m²");
+            dimension2Distance.setText("Dist: " + String.format("%.2f", objectDistance) + "m");
             if (objectGroundHeight > 0) {
-                groundH2.setText("GrndH: " + String.format("%.2f", objectGroundHeight) + "m");
+                dimension2GroundH.setText("GrndH: " + String.format("%.2f", objectGroundHeight) + "m");
             } else {
-                groundH2.setText("GrndH: N/A");
+                dimension2GroundH.setText("GrndH: N/A");
             }
         }
     }
@@ -641,13 +631,12 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
             Bitmap capturedImage = BitmapFactory.decodeByteArray(data, 0, data.length);
-
-            if (chosePic1.isChecked()) {
-                firstPhoto.setImageBitmap(capturedImage);
-                chosePic2.setChecked(true);
-            } else if (chosePic2.isChecked()) {
-                secondPhoto.setImageBitmap(capturedImage);
-                chosePic1.setChecked(true);
+            if (dimension1Select.isChecked()) {
+                dimension1Thumb.setImageBitmap(capturedImage);
+                dimension2Select.setChecked(true);
+            } else if (dimension2Select.isChecked()) {
+                dimension2Thumb.setImageBitmap(capturedImage);
+                dimension1Select.setChecked(true);
             }
         }
 
