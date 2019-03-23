@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Declaration of components required to calculate the device's orientation
     private float[] geomagnetic, gravity; //sideGeomagnetic, sideGravity;
-    private float[] RR = new float[9], orientation = new float[3]; //QQ = new float[9], sideOrientation = new float[3];
+    private float[] RR = new float[9], SR = new float[9], orientation = new float[3], sideOrientation = new float[3]; //QQ = new float[9], sideOrientation = new float[3];
 
     // Declaration of UI Components
     private FrameLayout cameraFrame;
@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Declare calculated results
     private double objectDistance, objectHeight, objectGroundHeight;
+    private double horizontalAngleStart;
 
     // Declare calibrated user input values
     private double cameraHeightFromGround;
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
         onGroundSwitch = (Switch) findViewById(R.id.touchGround);
         calibrateCameraHeight = (SeekBar) findViewById(R.id.gHSB);
         calibrateCameraHeight.setProgress(160);
+        calibrateCameraHeight.setMax(300);
         centrePoint = (ImageView) findViewById(R.id.obRef);
         angleLabel = (TextView) findViewById(R.id.aL);
 
@@ -117,6 +119,8 @@ public class MainActivity extends AppCompatActivity {
         choosePic = (RadioGroup) findViewById(R.id.selectPic);
         chosePic1 = (RadioButton) findViewById(R.id.pic1);
         chosePic2 = (RadioButton) findViewById(R.id.pic2);
+
+        horizontalAngleStart = 0;
 
 
     }
@@ -188,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
 
                 centrePoint.setVisibility(View.VISIBLE);
                 onGroundSwitch.setEnabled(true);
+                horizontalAngleStart = 0;
 
             }
         });
@@ -224,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
                 cameraHeightFromGround = i;
                 cameraHeightFromGround = cameraHeightFromGround / 100;
                 cameraHeightValue.setText("H = " + cameraHeightFromGround + "m");
+
             }
 
             @Override
@@ -267,8 +273,45 @@ public class MainActivity extends AppCompatActivity {
         if (geomagnetic != null && gravity != null) {
             SensorManager.getRotationMatrix(RR, null, gravity, geomagnetic);
             SensorManager.getOrientation(RR, orientation);
-            angleValue.setText("fA: " + String.format("%.0f",convertToDegrees(orientation[1])) + "°\nsA: " + String.format("%.0f",Math.toDegrees(orientation[2])) + "°");
+            SR = new float[]{RR[1], RR[0], RR[2], RR[4], RR[3], RR[5], RR[7], RR[6], RR[8]};
+            SensorManager.getOrientation(SR, sideOrientation);
+            // working, start, actual
+            angleValue.setText("fA: " + String.format("%.0f",convertToDegrees(orientation[1]))
+                    + "°\nwA: " + String.format("%.0f",sortYAngle(Math.toDegrees(sideOrientation[0]) - horizontalAngleStart))
+                    + "°\nsA" + String.format("%.0f", horizontalAngleStart)
+                    + "°\naA" + String.format("%.0f", Math.toDegrees(sideOrientation[0]) - horizontalAngleStart)
+                    + "°\n\n" + String.format("%.0f", Math.toDegrees(sideOrientation[0]))
+                    + "°\n" + String.format("%.0f", Math.toDegrees(SR[1])));
+            //angleValue.setText(convert(SR));
+        }
+    }
 
+    public String convert(float[] arr) {
+        String s = "";
+        for (int i=0;i<arr.length;i++) {
+            s += String.format("%.1f",Math.toDegrees(arr[i])) + "\n";
+        }
+        return s;
+    }
+
+    public double sortYAngle(double angle) {
+        // switch the angle sign upon sudden change in sign
+        if (horizontalAngleStart == 0 || (horizontalAngleStart > 0 && angle > 0) || (horizontalAngleStart < 0 && angle < 0)) {
+            return angle;
+        } else {
+            if (horizontalAngleStart >= 0) {
+                if ((Math.toDegrees(sideOrientation[0]) > 0) && (Math.toDegrees(sideOrientation[0]) < horizontalAngleStart)) {
+                    return angle;
+                } else {
+                    return 360 + angle;
+                }
+            } else {
+                if ((Math.toDegrees(sideOrientation[0]) < 0) && (Math.toDegrees(sideOrientation[0]) > horizontalAngleStart)) {
+                    return angle;
+                } else {
+                    return (360 - angle) * -1;
+                }
+            }
         }
     }
 
@@ -308,6 +351,7 @@ public class MainActivity extends AppCompatActivity {
             centrePoint.setColorFilter(Color.YELLOW);
             angleLabel.setTextColor(Color.YELLOW);
             angleLabel.setText("Tilt your phone sideways.\nPoint the dot on the left side of the object and tap");
+            horizontalAngleStart = Math.toDegrees(sideOrientation[0]);
             // Calibrate Angle Values
             calibrateAngleValues();
 
@@ -316,13 +360,15 @@ public class MainActivity extends AppCompatActivity {
                 measureObjectAboveGround();
             else
                 measureObjectOnGround();
+
+
         } else if (leftObAngle == 0) {
-            leftObAngle = adjust_angle_rotation(Math.toDegrees(orientation[2]));
+            leftObAngle = adjust_angle_rotation(Math.toDegrees(sideOrientation[0]) - horizontalAngleStart);
             centrePoint.setColorFilter(Color.MAGENTA);
             angleLabel.setTextColor(Color.MAGENTA);
             angleLabel.setText("Tilt your phone sideways.\nPoint the dot on the right side of the object and tap");
         } else if (rightObAngle == 0) {
-            rightObAngle = adjust_angle_rotation(Math.toDegrees(orientation[2]));
+            rightObAngle = adjust_angle_rotation(Math.toDegrees(sideOrientation[0]) - horizontalAngleStart);
             centrePoint.clearColorFilter();
             centrePoint.setVisibility(View.INVISIBLE);
             angleLabel.setTextColor(Color.WHITE);
@@ -390,12 +436,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void saveAndCalculateArea() {
         if (chosePic1.isChecked()) {
-            width1.setText("Width: " + String.format("%.2f", objectHeight) + "m");
-            height1.setText("Height: " + String.format("%.2f", objectWidth) + "m");
+            width1.setText("Width: " + String.format("%.2f", objectWidth) + "m");
+            height1.setText("Height: " + String.format("%.2f", objectHeight) + "m");
             area1.setText("Area: " + String.format("%.2f", objectHeight * objectWidth) + "m²");
         } else if (chosePic2.isChecked()) {
-            width2.setText("Width: " + String.format("%.2f", objectHeight) + "m");
-            height2.setText("Height: " + String.format("%.2f", objectWidth) + "m");
+            width2.setText("Width: " + String.format("%.2f", objectWidth) + "m");
+            height2.setText("Height: " + String.format("%.2f", objectHeight) + "m");
             area2.setText("Area: " + String.format("%.2f", objectHeight * objectWidth) + "m²");
         }
     }

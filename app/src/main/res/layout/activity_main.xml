@@ -186,11 +186,11 @@
 
     <TextView
         android:id="@+id/aV"
-        android:layout_width="51dp"
-        android:layout_height="46dp"
-        android:layout_marginStart="84dp"
-        android:layout_marginLeft="84dp"
-        android:layout_marginBottom="16dp"
+        android:layout_width="74dp"
+        android:layout_height="220dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginBottom="168dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -244,12 +244,6 @@
         android:text="Reset"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:text="TextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView" />
 
 
 </android.support.constraint.ConstraintLayout>
