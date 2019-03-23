@@ -6,76 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <FrameLayout
-        android:id="@+id/frameLayout"
-        android:layout_width="234dp"
-        android:layout_height="276dp"
-        android:layout_marginStart="112dp"
-        android:layout_marginLeft="112dp"
-        android:layout_marginBottom="124dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ImageView
-        android:id="@+id/obRef"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
-        android:layout_gravity="center"
-        android:layout_marginStart="229dp"
-        android:layout_marginLeft="229dp"
-        android:layout_marginBottom="262dp"
-        android:src="@android:drawable/presence_online"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-
-    <Button
-        android:id="@+id/saveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="136dp"
-        android:layout_marginLeft="136dp"
-        android:layout_marginBottom="16dp"
-        android:onClick="captureImage"
-        android:text="use"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <com.example.volumecalculator.VerticalSeekBar
-        android:id="@+id/gHSB"
-        android:layout_width="33dp"
-        android:layout_height="301dp"
-        android:layout_marginStart="76dp"
-        android:layout_marginLeft="76dp"
-        android:layout_marginBottom="108dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <RadioGroup
-        android:id="@+id/selectPic"
-        android:layout_width="112dp"
-        android:layout_height="65dp"
-        android:layout_marginStart="240dp"
-        android:layout_marginLeft="240dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <RadioButton
-            android:id="@+id/pic1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="Dimension 1" />
-
-        <RadioButton
-            android:id="@+id/pic2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Dimension 2" />
-    </RadioGroup>
-
     <Switch
-        android:id="@+id/touchGround"
+        android:id="@+id/onGrndSwtch"
         android:layout_width="110dp"
         android:layout_height="38dp"
         android:layout_marginStart="8dp"
@@ -85,42 +17,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/gHL"
-        android:layout_width="67dp"
-        android:layout_height="27dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginBottom="108dp"
-        android:text="H = 1.62m"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/fA"
-        android:layout_width="78dp"
-        android:layout_height="49dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginBottom="336dp"
-        android:text="Front Angle:"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/volButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginBottom="405dp"
-        android:onClick="calculateVolume"
-        android:text="Calculate Volume"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/uA"
+        android:id="@+id/logTxt"
         android:layout_width="232dp"
         android:layout_height="32dp"
         android:layout_marginStart="120dp"
@@ -129,26 +28,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/aL"
-        android:layout_width="303dp"
-        android:layout_height="54dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginLeft="28dp"
-        android:layout_marginBottom="64dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/resetButton"
-        android:layout_width="70dp"
-        android:layout_height="38dp"
-        android:text="Reset"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <RelativeLayout
-        android:id="@+id/screenshot"
+        android:id="@+id/scrnShotView"
         android:layout_width="357dp"
         android:layout_height="125dp"
         android:layout_marginBottom="404dp"
@@ -156,7 +37,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <TextView
-            android:id="@+id/picVol"
+            android:id="@+id/objVol"
             android:layout_width="185dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -170,7 +51,7 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <ImageView
-            android:id="@+id/img1"
+            android:id="@+id/dim1Thumb"
             android:layout_width="75dp"
             android:layout_height="75dp"
             android:layout_alignParentStart="true"
@@ -184,7 +65,7 @@
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
-            android:id="@+id/pic1w"
+            android:id="@+id/dim1w"
             android:layout_width="95dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -198,7 +79,7 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/pic1h"
+            android:id="@+id/dim1h"
             android:layout_width="95dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -212,7 +93,7 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/pic1a"
+            android:id="@+id/dim1a"
             android:layout_width="95dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -226,7 +107,7 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/pic1d"
+            android:id="@+id/dim1d"
             android:layout_width="95dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -240,7 +121,7 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/pic1g"
+            android:id="@+id/dim1g"
             android:layout_width="95dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -254,7 +135,7 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <ImageView
-            android:id="@+id/img2"
+            android:id="@+id/dim2Thumb"
             android:layout_width="75dp"
             android:layout_height="75dp"
             android:layout_alignParentStart="true"
@@ -268,7 +149,7 @@
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
-            android:id="@+id/pic2w"
+            android:id="@+id/dim2w"
             android:layout_width="95dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -282,7 +163,7 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/pic2h"
+            android:id="@+id/dim2h"
             android:layout_width="95dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -296,7 +177,7 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/pic2a"
+            android:id="@+id/dim2a"
             android:layout_width="95dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -310,7 +191,7 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/pic2d"
+            android:id="@+id/dim2d"
             android:layout_width="95dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -324,7 +205,7 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/pic2g"
+            android:id="@+id/dim2g"
             android:layout_width="95dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -340,17 +221,30 @@
     </RelativeLayout>
 
     <Button
-        android:id="@+id/screenButton"
-        android:layout_width="71dp"
-        android:layout_height="37dp"
-        android:layout_marginBottom="30dp"
-        android:onClick="saveScreenshot"
-        android:text="SAVE"
+        android:id="@+id/calcVolBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="405dp"
+        android:onClick="calculateVolume"
+        android:text="Calculate Volume"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/sA"
+        android:id="@+id/frntAngle"
+        android:layout_width="78dp"
+        android:layout_height="49dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="336dp"
+        android:text="Front Angle:"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/sideAngle"
         android:layout_width="75dp"
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
@@ -361,14 +255,120 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/tA"
+        android:id="@+id/takeBtn"
         android:layout_width="72dp"
         android:layout_height="36dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginBottom="135dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginBottom="132dp"
         android:onClick="callGetAngles"
         android:text="take"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/grndHLbl"
+        android:layout_width="67dp"
+        android:layout_height="27dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="108dp"
+        android:text="H = 1.62m"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.example.volumecalculator.VerticalSeekBar
+        android:id="@+id/grndHSB"
+        android:layout_width="33dp"
+        android:layout_height="301dp"
+        android:layout_marginStart="76dp"
+        android:layout_marginLeft="76dp"
+        android:layout_marginBottom="108dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/objRef"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="229dp"
+        android:layout_marginLeft="229dp"
+        android:layout_marginBottom="262dp"
+        android:src="@android:drawable/presence_online"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/camView"
+        android:layout_width="234dp"
+        android:layout_height="276dp"
+        android:layout_marginStart="112dp"
+        android:layout_marginLeft="112dp"
+        android:layout_marginBottom="124dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/insMsg"
+        android:layout_width="303dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginBottom="64dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <RadioGroup
+        android:id="@+id/dimSelect"
+        android:layout_width="112dp"
+        android:layout_height="65dp"
+        android:layout_marginStart="240dp"
+        android:layout_marginLeft="240dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <RadioButton
+            android:id="@+id/dim1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Dimension 1" />
+
+        <RadioButton
+            android:id="@+id/dim2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dimension 2" />
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/useBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="136dp"
+        android:layout_marginLeft="136dp"
+        android:layout_marginBottom="16dp"
+        android:onClick="captureImage"
+        android:text="use"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/saveBtn"
+        android:layout_width="71dp"
+        android:layout_height="37dp"
+        android:layout_marginBottom="30dp"
+        android:onClick="saveScreenshot"
+        android:text="SAVE"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/resetBtn"
+        android:layout_width="70dp"
+        android:layout_height="38dp"
+        android:text="Reset"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
