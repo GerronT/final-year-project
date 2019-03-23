@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Declaration of UI Components
     private FrameLayout cameraFrame;
-    private TextView angleLabel, unexpectedAngle, angleValue, cameraHeightValue;
+    private TextView angleLabel, unexpectedAngle, frontAngleValue, sideAngleValue, cameraHeightValue;
     private SeekBar calibrateCameraHeight;
     private Switch onGroundSwitch;
     private ImageView centrePoint;
@@ -53,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
     private double leftObAngle, rightObAngle;
     private double objectWidth;
 
-    private Button captureButton, volumeButton, screenshotButton;
-    private TextView width1, height1, area1, width2, height2, area2, volume;
+    private Button captureButton, volumeButton, screenshotButton, takeAngleButton;
+    private TextView width1, height1, area1, distance1, groundH1, width2, height2, area2, distance2, groundH2, volume;
 
     private int current = 1;
 
@@ -92,7 +92,8 @@ public class MainActivity extends AppCompatActivity {
         cameraFrame = (FrameLayout) findViewById(R.id.frameLayout);
         cameraHeightValue = (TextView) findViewById(R.id.gHL);
         unexpectedAngle = (TextView) findViewById(R.id.uA);
-        angleValue = (TextView) findViewById(R.id.aV);
+        frontAngleValue = (TextView) findViewById(R.id.fA);
+        sideAngleValue = (TextView) findViewById(R.id.sA);
         onGroundSwitch = (Switch) findViewById(R.id.touchGround);
         calibrateCameraHeight = (SeekBar) findViewById(R.id.gHSB);
         calibrateCameraHeight.setProgress(160);
@@ -101,6 +102,8 @@ public class MainActivity extends AppCompatActivity {
         angleLabel = (TextView) findViewById(R.id.aL);
         resultScreenshot = (RelativeLayout) findViewById(R.id.screenshot);
         screenshotButton = (Button) findViewById(R.id.screenButton);
+        screenshotButton.setEnabled(false);
+        takeAngleButton = (Button) findViewById(R.id.tA);
 
         captureButton = (Button) findViewById(R.id.saveButton);
         captureButton.setEnabled(false);
@@ -108,10 +111,14 @@ public class MainActivity extends AppCompatActivity {
         width1 = (TextView) findViewById(R.id.pic1w);
         height1 = (TextView) findViewById(R.id.pic1h);
         area1 = (TextView) findViewById(R.id.pic1a);
+        distance1 = (TextView) findViewById(R.id.pic1d);
+        groundH1 = (TextView) findViewById(R.id.pic1g);
 
         width2 = (TextView) findViewById(R.id.pic2w);
         height2 = (TextView) findViewById(R.id.pic2h);
         area2 = (TextView) findViewById(R.id.pic2a);
+        distance2 = (TextView) findViewById(R.id.pic2d);
+        groundH2 = (TextView) findViewById(R.id.pic2g);
 
         volumeButton = (Button) findViewById(R.id.volButton);
         volumeButton.setEnabled(false);
@@ -126,11 +133,9 @@ public class MainActivity extends AppCompatActivity {
         chosePic2 = (RadioButton) findViewById(R.id.pic2);
 
         horizontalAngleStart = 0;
-
-
+        frontAngleValue.setVisibility(View.VISIBLE);
+        sideAngleValue.setVisibility(View.INVISIBLE);
     }
-
-
 
     public void initCamera(){
         camera = android.hardware.Camera.open();
@@ -177,11 +182,15 @@ public class MainActivity extends AppCompatActivity {
                     width1.setText("Width:");
                     height1.setText("Height:");
                     area1.setText("Area:");
+                    distance1.setText("Dist:");
+                    groundH1.setText("GrndH:");
                 } else if (chosePic2.isChecked()) {
                     secondPhoto.setImageResource(0);
                     width2.setText("Width:");
                     height2.setText("Height");
                     area2.setText("Area:");
+                    distance2.setText("Dist:");
+                    groundH2.setText("GrndH:");
                 }
 
                 //Enable choosing dimensions again
@@ -195,10 +204,20 @@ public class MainActivity extends AppCompatActivity {
                     angleLabel.setText("Tilt your phone frontwards/downwards.\nPoint the dot at the bottom of the object and tap");
                 }
 
+
                 centrePoint.setVisibility(View.VISIBLE);
+                takeAngleButton.setEnabled(true);
                 onGroundSwitch.setEnabled(true);
                 calibrateCameraHeight.setEnabled(true);
+                frontAngleValue.setVisibility(View.VISIBLE);
+                sideAngleValue.setVisibility(View.INVISIBLE);
                 horizontalAngleStart = 0;
+
+                if (firstPhoto.getDrawable() != null || secondPhoto.getDrawable() != null) {
+                    screenshotButton.setEnabled(true);
+                } else {
+                    screenshotButton.setEnabled(false);
+                }
 
             }
         });
@@ -275,6 +294,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void callGetAngles(View v) {
+        getAngles();
+    }
+
     public void saveScreenshot(View v) {
         resultScreenshot.setDrawingCacheEnabled(true);
         resultScreenshot.buildDrawingCache();
@@ -300,8 +323,8 @@ public class MainActivity extends AppCompatActivity {
             SR = new float[]{RR[1], RR[0], RR[2], RR[4], RR[3], RR[5], RR[7], RR[6], RR[8]};
             SensorManager.getOrientation(SR, sideOrientation);
             // working, start, actual
-            angleValue.setText("fA: " + String.format("%.0f",convertToDegrees(orientation[1]))
-                    + "°\nwA: " + String.format("%.0f",sortYAngle(Math.toDegrees(sideOrientation[0]) - horizontalAngleStart)));
+            frontAngleValue.setText("Front Angle:\n" + String.format("%.0f",convertToDegrees(orientation[1])) + "°");
+            sideAngleValue.setText("Side Angle:\n" + String.format("%.0f",sortYAngle(Math.toDegrees(sideOrientation[0]) - horizontalAngleStart)) + "°");
         }
     }
 
@@ -364,6 +387,8 @@ public class MainActivity extends AppCompatActivity {
             angleLabel.setTextColor(Color.YELLOW);
             angleLabel.setText("Tilt your phone sideways.\nPoint the dot on the left side of the object and tap");
             horizontalAngleStart = Math.toDegrees(sideOrientation[0]);
+            frontAngleValue.setVisibility(View.INVISIBLE);
+            sideAngleValue.setVisibility(View.VISIBLE);
             // Calibrate Angle Values
             calibrateAngleValues();
 
@@ -393,6 +418,8 @@ public class MainActivity extends AppCompatActivity {
             }
             measureObjectWidth();
             captureButton.setEnabled(true);
+            sideAngleValue.setVisibility(View.INVISIBLE);
+            takeAngleButton.setEnabled(false);
             // make save enabled
         }
     }
@@ -419,12 +446,20 @@ public class MainActivity extends AppCompatActivity {
             calibrateCameraHeight.setEnabled(true);
             captureButton.setEnabled(false);
             centrePoint.setVisibility(View.VISIBLE);
+            takeAngleButton.setEnabled(true);
+            screenshotButton.setEnabled(true);
+            frontAngleValue.setVisibility(View.VISIBLE);
 
             groundAngle = 0;
             botObAngle = 0;
             topObAngle = 0;
             rightObAngle = 0;
             leftObAngle = 0;
+
+            objectGroundHeight = 0;
+            objectDistance = 0;
+            objectWidth = 0;
+            objectHeight = 0;
         }
     }
 
@@ -436,7 +471,7 @@ public class MainActivity extends AppCompatActivity {
         // Set second width as length
         double finalLength = areaTextToDouble(width2.getText().toString(), "Width:", "m");
         // Volume = H * W * L
-        volume.setText("Volume = " + String.format("%.3f", finalHeight * finalWidth * finalLength) + "m³");
+        volume.setText("Volume = " + String.format("%.9f", finalHeight * finalWidth * finalLength) + "m³");
     }
 
     public double areaTextToDouble(String areaInText, String label, String unit) {
@@ -452,10 +487,22 @@ public class MainActivity extends AppCompatActivity {
             width1.setText("Width: " + String.format("%.2f", objectWidth) + "m");
             height1.setText("Height: " + String.format("%.2f", objectHeight) + "m");
             area1.setText("Area: " + String.format("%.2f", objectHeight * objectWidth) + "m²");
+            distance1.setText("Dist: " + String.format("%.2f", objectDistance) + "m");
+            if (objectGroundHeight > 0) {
+                groundH1.setText("GrndH: " + String.format("%.2f", objectGroundHeight) + "m");
+            } else {
+                groundH1.setText("GrndH: N/A");
+            }
         } else if (chosePic2.isChecked()) {
             width2.setText("Width: " + String.format("%.2f", objectWidth) + "m");
             height2.setText("Height: " + String.format("%.2f", objectHeight) + "m");
             area2.setText("Area: " + String.format("%.2f", objectHeight * objectWidth) + "m²");
+            distance2.setText("Dist: " + String.format("%.2f", objectDistance) + "m");
+            if (objectGroundHeight > 0) {
+                groundH2.setText("GrndH: " + String.format("%.2f", objectGroundHeight) + "m");
+            } else {
+                groundH2.setText("GrndH: N/A");
+            }
         }
     }
 
