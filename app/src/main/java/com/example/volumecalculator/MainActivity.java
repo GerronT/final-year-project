@@ -298,7 +298,7 @@ public class MainActivity extends AppCompatActivity {
             SensorManager.getOrientation(SR, sideOrientation);
             // working, start, actual
             frontAngleValue.setText("Front Angle:\n" + String.format("%.0f",sortXAngle(frontOrientation[1])) + "°");
-            sideAngleValue.setText("Front Angle:\n" + String.format("%.0f", sortYAngle(Math.toDegrees(sideOrientation[0]) - horizontalAngleStart))+ "°");
+            sideAngleValue.setText("Side Angle:\n" + String.format("%.0f", sortYAngle(Math.toDegrees(sideOrientation[0]) - horizontalAngleStart))+ "°");
             //sideAngleValue.setText(convert(SR));
 
         }
