@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
             dimension1Width, dimension1Height, dimension1Area, dimension1Distance, dimension1GroundH,
             dimension2Width, dimension2Height, dimension2Area, dimension2Distance, dimension2GroundH,
             objectVolume;
-    private Button useButton, calculateVolumeButton, saveButton, takeButton;
+    private Button useButton, calculateVolumeButton, saveButton, takeButton, resetButton;
     private SeekBar calibrateCameraHeight;
     private Switch onGroundSwitch;
     private ImageView dimension1Thumb, dimension2Thumb, centrePoint;
@@ -50,89 +50,86 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initVars();
-        initCamera();
         initListeners();
     }
 
+    /**
+     * Initialises all the required variables.
+     */
     public void initVars(){
-        // Photo thumbnails
-        dimension1Thumb = (ImageView) findViewById(R.id.dim1Thumb);
-        dimension2Thumb = (ImageView) findViewById(R.id.dim2Thumb);
-
-        // initialise sensors
+        // Initialise sensor components
         accelerometer = new Accelerometer(this);
         magneticSensor = new MagneticSensor(this);
 
-        // initialise angles
-        botObAngle = 0;
-        topObAngle = 0;
-        groundAngle = 0;
-
-        leftObAngle = 0;
-        rightObAngle = 0;
-
-        // initialise camera height
-        cameraHeightFromGround = 162 / 100;
-
-        // link UI Components
-        cameraViewFrame = (FrameLayout) findViewById(R.id.camView);
-        cameraHeightValue = (TextView) findViewById(R.id.grndHLbl);
-        logReport = (TextView) findViewById(R.id.logTxt);
-        frontAngleValue = (TextView) findViewById(R.id.frntAngle);
-        sideAngleValue = (TextView) findViewById(R.id.sideAngle);
-        onGroundSwitch = (Switch) findViewById(R.id.onGrndSwtch);
-        calibrateCameraHeight = (SeekBar) findViewById(R.id.grndHSB);
-        calibrateCameraHeight.setProgress(160);
-        calibrateCameraHeight.setMax(300);
-        centrePoint = (ImageView) findViewById(R.id.objRef);
-        instructionMessage = (TextView) findViewById(R.id.insMsg);
-        resultScreenshot = (RelativeLayout) findViewById(R.id.scrnShotView);
-        saveButton = (Button) findViewById(R.id.saveBtn);
-        saveButton.setEnabled(false);
-        takeButton = (Button) findViewById(R.id.takeBtn);
-
-        useButton = (Button) findViewById(R.id.useBtn);
-        useButton.setEnabled(false);
-
+        // Link UI components with variables, set some values and disable certain components
+        dimension1Thumb = (ImageView) findViewById(R.id.dim1Thumb);
         dimension1Width = (TextView) findViewById(R.id.dim1w);
         dimension1Height = (TextView) findViewById(R.id.dim1h);
         dimension1Area = (TextView) findViewById(R.id.dim1a);
         dimension1Distance = (TextView) findViewById(R.id.dim1d);
         dimension1GroundH = (TextView) findViewById(R.id.dim1g);
 
+        dimension2Thumb = (ImageView) findViewById(R.id.dim2Thumb);
         dimension2Width = (TextView) findViewById(R.id.dim2w);
         dimension2Height = (TextView) findViewById(R.id.dim2h);
         dimension2Area = (TextView) findViewById(R.id.dim2a);
         dimension2Distance = (TextView) findViewById(R.id.dim2d);
         dimension2GroundH = (TextView) findViewById(R.id.dim2g);
 
-        calculateVolumeButton = (Button) findViewById(R.id.calcVolBtn);
-        calculateVolumeButton.setEnabled(false);
-
-        objectVolume = (TextView) findViewById(R.id.objVol);
-
-        instructionMessage.setTextColor(Color.GREEN);
-        instructionMessage.setText("Tilt your phone frontwards/downwards. Point the dot at the ground and tap it or press take.");
-
         dimension1Select = (RadioButton) findViewById(R.id.dim1);
         dimension2Select = (RadioButton) findViewById(R.id.dim2);
 
-        horizontalAngleStart = 0;
-        frontAngleValue.setVisibility(View.VISIBLE);
+        calibrateCameraHeight = (SeekBar) findViewById(R.id.grndHSB);
+        calibrateCameraHeight.setProgress(160);
+        calibrateCameraHeight.setMax(300);
+        cameraHeightValue = (TextView) findViewById(R.id.grndHLbl);
+        onGroundSwitch = (Switch) findViewById(R.id.onGrndSwtch);
+        cameraViewFrame = (FrameLayout) findViewById(R.id.camView);
+        centrePoint = (ImageView) findViewById(R.id.objRef);
+        frontAngleValue = (TextView) findViewById(R.id.frntAngle);
+        sideAngleValue = (TextView) findViewById(R.id.sideAngle);
         sideAngleValue.setVisibility(View.INVISIBLE);
-    }
+        logReport = (TextView) findViewById(R.id.logTxt);
+        instructionMessage = (TextView) findViewById(R.id.insMsg);
+        instructionMessage.setTextColor(Color.GREEN);
+        instructionMessage.setText("Tilt your phone frontwards/downwards. Point the dot at the ground and tap it or press take.");
+        resultScreenshot = (RelativeLayout) findViewById(R.id.scrnShotView);
 
-    public void initCamera(){
+        resetButton = (Button) findViewById(R.id.resetBtn);
+        saveButton = (Button) findViewById(R.id.saveBtn);
+        saveButton.setEnabled(false);
+        takeButton = (Button) findViewById(R.id.takeBtn);
+        useButton = (Button) findViewById(R.id.useBtn);
+        useButton.setEnabled(false);
+        calculateVolumeButton = (Button) findViewById(R.id.calcVolBtn);
+        calculateVolumeButton.setEnabled(false);
+        objectVolume = (TextView) findViewById(R.id.objVol);
+
+        // Initialise Angle Values
+        botObAngle = 0;
+        topObAngle = 0;
+        groundAngle = 0;
+        leftObAngle = 0;
+        rightObAngle = 0;
+        horizontalAngleStart = 0;
+        cameraHeightFromGround = 162 / 100;
+
+        // Initialise camera components
         camera = android.hardware.Camera.open();
         showCamera = new ShowCamera(this, camera);
         cameraViewFrame.addView(showCamera);
     }
 
+
+    public void reset(View view) {
+
+    }
+    /**
+     * Initialise the necessary listeners.
+     */
     public void initListeners() {
-        // Button to reset the process and take another measurement
-        // Declare and initialise reset button
-        final Button resetBtn = (Button) findViewById(R.id.resetBtn);
-        resetBtn.setOnClickListener(new View.OnClickListener() {
+        // Reset button listener which resets
+        resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Reset currently stored angle values
