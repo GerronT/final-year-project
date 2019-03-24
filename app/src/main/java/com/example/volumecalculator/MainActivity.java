@@ -31,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
     private SeekBar calibrateCameraHeight;
     private Switch onGroundSwitch;
     private ImageView dimension1Thumb, dimension2Thumb, centrePoint;
-    private RadioGroup dimensionRadioGroup;
     private RadioButton dimension1Select, dimension2Select;
     private RelativeLayout resultScreenshot;
 
@@ -44,10 +43,7 @@ public class MainActivity extends AppCompatActivity {
     // Declaration of components required to calculate the device's orientation
     private float[] geomagnetic, gravity;
     private float[] RR = new float[9], SR = new float[9],
-            orientation = new float[3], sideOrientation = new float[3];
-
-    // Declaration of which dimension is being used.
-    private int current;
+            frontOrientation = new float[3], sideOrientation = new float[3];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +70,6 @@ public class MainActivity extends AppCompatActivity {
 
         leftObAngle = 0;
         rightObAngle = 0;
-
-        current = 1;
 
         // initialise camera height
         cameraHeightFromGround = 162 / 100;
@@ -120,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
         instructionMessage.setTextColor(Color.GREEN);
         instructionMessage.setText("Tilt your phone frontwards/downwards. Point the dot at the ground and tap it or press take.");
 
-        dimensionRadioGroup = (RadioGroup) findViewById(R.id.dimSelect);
         dimension1Select = (RadioButton) findViewById(R.id.dim1);
         dimension2Select = (RadioButton) findViewById(R.id.dim2);
 
@@ -273,17 +266,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-        dimensionRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if(checkedId == R.id.dim1) {
-                    current = 1;
-                } else if (checkedId == R.id.dim2) {
-                    current = 2;
-                }
-            }
-        });
     }
 
     public void callGetAngles(View v) {
@@ -311,70 +293,83 @@ public class MainActivity extends AppCompatActivity {
     public void updateOrientation() {
         if (geomagnetic != null && gravity != null) {
             SensorManager.getRotationMatrix(RR, null, gravity, geomagnetic);
-            SensorManager.getOrientation(RR, orientation);
+            SensorManager.getOrientation(RR, frontOrientation);
             SR = new float[]{RR[1], RR[0], RR[2], RR[4], RR[3], RR[5], RR[7], RR[6], RR[8]};
             SensorManager.getOrientation(SR, sideOrientation);
             // working, start, actual
-            frontAngleValue.setText("Front Angle:\n" + String.format("%.0f",convertToDegrees(orientation[1])) + "°");
-            sideAngleValue.setText("Side Angle:\n" + String.format("%.0f",sortYAngle(Math.toDegrees(sideOrientation[0]) - horizontalAngleStart)) + "°");
+            frontAngleValue.setText("Front Angle:\n" + String.format("%.0f",sortXAngle(frontOrientation[1])) + "°");
+            sideAngleValue.setText("Front Angle:\n" + String.format("%.0f", sortYAngle(Math.toDegrees(sideOrientation[0]) - horizontalAngleStart))+ "°");
+            //sideAngleValue.setText(convert(SR));
+
         }
     }
 
-    public double sortYAngle(double angle) {
-        // switch the angle sign upon sudden change in sign
-        if (horizontalAngleStart == 0 || (horizontalAngleStart > 0 && angle > 0) || (horizontalAngleStart < 0 && angle < 0)) {
-            return angle;
+    public String convert(float[] array) {
+        String s = "";
+        for (int i=0;i<array.length;i++) {
+            s += String.format("%.0f",Math.toDegrees(array[i])) + "\n";
+        }
+        return s;
+
+    }
+
+    public double sortYAngle(double angleYDegrees) {
+        // Ensures y degree angle returns the valid angle.
+        //double angleYDegrees = Math.toDegrees(angleYRadians - horizontalAngleStart);
+        if (horizontalAngleStart == 0 || (horizontalAngleStart > 0 && angleYDegrees > 0) || (horizontalAngleStart < 0 && angleYDegrees < 0)) {
+            return angleYDegrees;
         } else {
             if (horizontalAngleStart >= 0) {
                 if ((Math.toDegrees(sideOrientation[0]) > 0) && (Math.toDegrees(sideOrientation[0]) < horizontalAngleStart)) {
-                    return angle;
+                    return angleYDegrees;
                 } else {
-                    return 360 + angle;
+                    return 360 + angleYDegrees;
                 }
             } else {
                 if ((Math.toDegrees(sideOrientation[0]) < 0) && (Math.toDegrees(sideOrientation[0]) > horizontalAngleStart)) {
-                    return angle;
+                    return angleYDegrees;
                 } else {
-                    return (360 - angle) * -1;
+                    return (360 - angleYDegrees) * -1;
                 }
             }
         }
     }
 
 
-    public double convertToDegrees(float orientation) {
-        double degrees = Math.toDegrees(orientation) % 360 + 90;
-        if (degrees > 90) {
-            degrees = 180 - degrees;
+    public double sortXAngle(float angleXRadians) {
+        // x degree starts at 90. Make it start at 0
+        double angleXDegrees = Math.toDegrees(angleXRadians) % 360 + 90;
+        if (angleXDegrees > 90) {
+            angleXDegrees = 180 - angleXDegrees;
         }
         // device is tilted backwards if RR[8] value is positive
         if (Math.toDegrees(RR[8]) < 0) {
-            degrees = -degrees;
+            angleXDegrees = -angleXDegrees;
         }
-        return degrees;
+        return angleXDegrees;
     }
     
     void getAngles() {
-        // get angle values for ground, bottom object, top object (pitch)
-        // get angle values for left object and right object (roll)
+        // get angle values for ground, bottom object, top object
+        // get angle values for left object and right object
         onGroundSwitch.setEnabled(false);
         calibrateCameraHeight.setEnabled(false);
         dimension1Select.setEnabled(false);
-        dimension1Select.setEnabled(false);
+        dimension2Select.setEnabled(false);
         if (!onGroundSwitch.isChecked() && groundAngle == 0) {
-            groundAngle = convertToDegrees(orientation[1]);
+            groundAngle = sortXAngle(frontOrientation[1]);
             centrePoint.setColorFilter(Color.BLUE);
             instructionMessage.setTextColor(Color.BLUE);
             instructionMessage.setText("Tilt your phone frontwards/downwards. Point the dot at the bottom of the object and tap it or press take.");
         }
         else if (botObAngle == 0) {
-            botObAngle = convertToDegrees(orientation[1]);
+            botObAngle = sortXAngle(frontOrientation[1]);
             centrePoint.setColorFilter(Color.RED);
             instructionMessage.setTextColor(Color.RED);
             instructionMessage.setText("Tilt your phone frontwards/downwards. Point the dot at the top of the object and tap it or press take.");
         }
         else if (topObAngle == 0) {
-            topObAngle = convertToDegrees(orientation[1]);
+            topObAngle = sortXAngle(frontOrientation[1]);
             centrePoint.setColorFilter(Color.YELLOW);
             instructionMessage.setTextColor(Color.YELLOW);
             instructionMessage.setText("Tilt your phone sideways. Point the dot on the left side of the object and tap it or press take.");
