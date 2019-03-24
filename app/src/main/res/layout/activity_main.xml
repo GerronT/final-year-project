@@ -33,7 +33,6 @@
         android:layout_width="357dp"
         android:layout_height="125dp"
         android:layout_marginBottom="404dp"
-        android:onClick="saveScreenshot"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -262,8 +261,8 @@
         android:layout_marginStart="4dp"
         android:layout_marginLeft="4dp"
         android:layout_marginBottom="132dp"
-        android:onClick="callGetAngles"
-        android:text="take"
+        android:onClick="takeAngles"
+        android:text="Take"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -350,8 +349,8 @@
         android:layout_marginStart="136dp"
         android:layout_marginLeft="136dp"
         android:layout_marginBottom="16dp"
-        android:onClick="captureImage"
-        android:text="use"
+        android:onClick="use"
+        android:text="Use"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -360,8 +359,8 @@
         android:layout_width="71dp"
         android:layout_height="37dp"
         android:layout_marginBottom="30dp"
-        android:onClick="saveScreenshot"
-        android:text="SAVE"
+        android:onClick="save"
+        android:text="Save"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -369,6 +368,7 @@
         android:id="@+id/resetBtn"
         android:layout_width="70dp"
         android:layout_height="38dp"
+        android:onClick="reset"
         android:text="Reset"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
