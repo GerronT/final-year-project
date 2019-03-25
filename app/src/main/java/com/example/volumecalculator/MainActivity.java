@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         dimension2Select = (RadioButton) findViewById(R.id.dim2);
 
         calibrateCameraHeight = (SeekBar) findViewById(R.id.grndHSB);
-        calibrateCameraHeight.setProgress(160);
+        calibrateCameraHeight.setProgress(162);
         calibrateCameraHeight.setMax(300);
         cameraHeightValue = (TextView) findViewById(R.id.grndHLbl);
         onGroundSwitch = (Switch) findViewById(R.id.onGrndSwtch);
@@ -620,7 +620,7 @@ public class MainActivity extends AppCompatActivity {
             // Object doesn't touch ground and is above eye level
             objectDistance = cameraHeightFromGround * (getTanFromDegrees(90 - Math.abs(groundAngle)));
             objectGroundHeight = cameraHeightFromGround + (objectDistance * getTanFromDegrees(Math.abs(botObAngle)));
-            objectHeight = (objectDistance * getTanFromDegrees(Math.abs(topObAngle) + Math.abs(botObAngle))) - (objectDistance * getTanFromDegrees(Math.abs(botObAngle)));
+            objectHeight = (objectDistance * getTanFromDegrees(Math.abs(botObAngle) + Math.abs(topObAngle))) - (objectDistance * getTanFromDegrees(Math.abs(botObAngle)));
         } else if (botObAngle > 0 && topObAngle > 0) {
             // Object doesn't touch ground and is below eye level
             objectDistance = cameraHeightFromGround * getTanFromDegrees(90 - Math.abs(groundAngle) - Math.abs(botObAngle) - Math.abs(topObAngle));
@@ -628,7 +628,7 @@ public class MainActivity extends AppCompatActivity {
             objectGroundHeight = cameraHeightFromGround - objectHeight - (objectDistance * getTanFromDegrees(Math.abs(topObAngle)));
         } else if (botObAngle > 0 && topObAngle < 0) {
             // Object doesn't touch ground and is on eye level
-            objectDistance = cameraHeightFromGround * getTanFromDegrees(90 - Math.abs(groundAngle));
+            objectDistance = cameraHeightFromGround * getTanFromDegrees(90 - Math.abs(groundAngle) - Math.abs(botObAngle));
             objectGroundHeight = cameraHeightFromGround - (objectDistance * getTanFromDegrees(Math.abs(botObAngle)));
             objectHeight = (objectDistance *  getTanFromDegrees(Math.abs(botObAngle))) + (objectDistance *  getTanFromDegrees(Math.abs(topObAngle)));
         }
