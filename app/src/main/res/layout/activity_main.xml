@@ -245,24 +245,24 @@
 
     <TextView
         android:id="@+id/sideAngle"
-        android:layout_width="75dp"
-        android:layout_height="50dp"
+        android:layout_width="74dp"
+        android:layout_height="113dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginBottom="286dp"
+        android:layout_marginBottom="220dp"
         android:text="Side Angle: "
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/takeBtn"
+        android:id="@+id/readyTakeBtn"
         android:layout_width="72dp"
         android:layout_height="36dp"
         android:layout_marginStart="4dp"
         android:layout_marginLeft="4dp"
         android:layout_marginBottom="132dp"
-        android:onClick="takeAngles"
-        android:text="Take"
+        android:onClick="ready"
+        android:text="Ready"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

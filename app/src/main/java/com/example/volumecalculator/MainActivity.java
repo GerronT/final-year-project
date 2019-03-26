@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
             dimension1Width, dimension1Height, dimension1Area, dimension1Distance, dimension1GroundH,
             dimension2Width, dimension2Height, dimension2Area, dimension2Distance, dimension2GroundH,
             objectVolume;
-    private Button useButton, calculateVolumeButton, saveButton, takeButton, resetButton;
+    private Button useButton, calculateVolumeButton, saveButton, readyTakeButton, resetButton;
     private SeekBar calibrateCameraHeight;
     private Switch onGroundSwitch;
     private ImageView dimension1Thumb, dimension2Thumb, centrePoint;
@@ -87,18 +87,18 @@ public class MainActivity extends AppCompatActivity {
         cameraViewFrame = (FrameLayout) findViewById(R.id.camView);
         centrePoint = (ImageView) findViewById(R.id.objRef);
         frontAngleValue = (TextView) findViewById(R.id.frntAngle);
+        frontAngleValue.setVisibility(View.INVISIBLE);
         sideAngleValue = (TextView) findViewById(R.id.sideAngle);
         sideAngleValue.setVisibility(View.INVISIBLE);
         logReport = (TextView) findViewById(R.id.logTxt);
         instructionMessage = (TextView) findViewById(R.id.insMsg);
-        instructionMessage.setTextColor(Color.GREEN);
-        instructionMessage.setText("Tilt your phone frontwards/downwards. Point the dot at the ground and tap it or press take.");
+        instructionMessage.setText("Face your device directly straight to the object and press ready.");
         resultScreenshot = (RelativeLayout) findViewById(R.id.scrnShotView);
 
         resetButton = (Button) findViewById(R.id.resetBtn);
         saveButton = (Button) findViewById(R.id.saveBtn);
         saveButton.setEnabled(false);
-        takeButton = (Button) findViewById(R.id.takeBtn);
+        readyTakeButton = (Button) findViewById(R.id.readyTakeBtn);
         useButton = (Button) findViewById(R.id.useBtn);
         useButton.setEnabled(false);
         calculateVolumeButton = (Button) findViewById(R.id.calcVolBtn);
@@ -160,11 +160,9 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (onGroundSwitch.isChecked()) {
                     onGroundSwitch.setText("On Ground");
-                    instructionMessage.setText("Tilt your phone frontwards/downwards. Point the dot at the bottom of the object and tap it or press take.");
                 }
                 else {
                     onGroundSwitch.setText("Above Ground");
-                    instructionMessage.setText("Tilt your phone frontwards/downwards. Point the dot at the ground and tap it or press take.");
                 }
             }
         });
@@ -215,22 +213,20 @@ public class MainActivity extends AppCompatActivity {
         // Enables components that needed to be enabled upon reset
         dimension1Select.setEnabled(true);
         dimension2Select.setEnabled(true);
-        takeButton.setEnabled(true);
+        readyTakeButton.setText("Ready");
+        readyTakeButton.setEnabled(true);
         onGroundSwitch.setEnabled(true);
         calibrateCameraHeight.setEnabled(true);
 
         // Returns some of the application components to their original state when they were first loaded
         centrePoint.clearColorFilter();
         centrePoint.setVisibility(View.VISIBLE);
-        instructionMessage.setTextColor(Color.GREEN);
+        instructionMessage.setTextColor(Color.WHITE);
 
-        // Message shown by the instructions will depend on the current state of onGroundSwitched
-        if (!onGroundSwitch.isChecked()) {
-            instructionMessage.setText("Tilt your phone frontwards/downwards. Point the dot at the ground and tap it or press take.");
-        } else {
-            instructionMessage.setText("Tilt your phone frontwards/downwards. Point the dot at the bottom of the object and tap it or press take.");
-        }
-        frontAngleValue.setVisibility(View.VISIBLE);
+        // Set instruction message back to start
+        instructionMessage.setText("Face your device directly straight to the object and press ready.");
+
+        frontAngleValue.setVisibility(View.INVISIBLE);
         sideAngleValue.setVisibility(View.INVISIBLE);
 
         // Only enables the save button if either or both of the measurements are up and shown
@@ -276,23 +272,18 @@ public class MainActivity extends AppCompatActivity {
                 calculateVolumeButton.setEnabled(true);
             }
             // Resets application state
-            instructionMessage.setTextColor(Color.GREEN);
-            if (!onGroundSwitch.isChecked()) {
-                instructionMessage.setText("Tilt your phone frontwards/downwards. Point the dot at the ground and tap it or press take.");
-            } else {
-                instructionMessage.setText("Tilt your phone frontwards/downwards. Point the dot at the bottom of the object and tap it or press take.");
-            }
+            instructionMessage.setText("Face your device directly straight to the object and press ready.");
 
             dimension1Select.setEnabled(true);
             dimension2Select.setEnabled(true);
             onGroundSwitch.setEnabled(true);
             calibrateCameraHeight.setEnabled(true);
 
-            takeButton.setEnabled(true);
+            readyTakeButton.setText("Ready");
+            readyTakeButton.setEnabled(true);
             saveButton.setEnabled(true);
             useButton.setEnabled(false);
 
-            frontAngleValue.setVisibility(View.VISIBLE);
             centrePoint.setVisibility(View.VISIBLE);
 
             groundAngle = 0;
@@ -322,7 +313,9 @@ public class MainActivity extends AppCompatActivity {
 
             // Displays the value of the device's orientation in both axis (Visibility depends on the current stage of the measuring process)
             frontAngleValue.setText("Front Angle:\n" + String.format("%.0f",sortXAngle(frontOrientation[1])) + "°");
-            sideAngleValue.setText("Side Angle:\n" + String.format("%.0f", sortYAngle(Math.toDegrees(sideOrientation[0]) - horizontalAngleStart))+ "°");
+            sideAngleValue.setText("Side Angle:\n" + String.format("%.0f", sortYAngle(Math.toDegrees(sideOrientation[0]) - horizontalAngleStart))+ "°"
+            + "\n" + String.format("%.0f", Math.toDegrees(sideOrientation[0]))
+            + "\n" + String.format("%.0f", horizontalAngleStart));
         }
     }
 
@@ -333,20 +326,29 @@ public class MainActivity extends AppCompatActivity {
      */
     public double sortYAngle(double angleYDegrees) {
         // Ensures y degree angle returns a valid angle.
-        if (horizontalAngleStart == 0 || (horizontalAngleStart > 0 && angleYDegrees > 0) || (horizontalAngleStart < 0 && angleYDegrees < 0)) {
+        if (horizontalAngleStart == 0 || (horizontalAngleStart >= 0 && angleYDegrees >= 0) || (horizontalAngleStart < 0 && angleYDegrees < 0)) {
             return angleYDegrees;
         } else {
             if (horizontalAngleStart >= 0) {
                 if ((Math.toDegrees(sideOrientation[0]) > 0) && (Math.toDegrees(sideOrientation[0]) < horizontalAngleStart)) {
                     return angleYDegrees;
                 } else {
-                    return 360 + angleYDegrees;
+                    if (Math.abs(angleYDegrees) >= Math.abs(360 + angleYDegrees)) {
+                        return 360 + angleYDegrees;
+                    } else {
+                        return angleYDegrees;
+                    }
                 }
             } else {
                 if ((Math.toDegrees(sideOrientation[0]) < 0) && (Math.toDegrees(sideOrientation[0]) > horizontalAngleStart)) {
                     return angleYDegrees;
                 } else {
-                    return (360 - angleYDegrees) * -1;
+                    //abs(angleYDegrees >= abs360-angleYDegrees)
+                    if (Math.abs(angleYDegrees) >= Math.abs(360 - angleYDegrees)) {
+                        return (360 - angleYDegrees) * -1;
+                    } else {
+                        return angleYDegrees;
+                    }
                 }
             }
         }
@@ -370,17 +372,35 @@ public class MainActivity extends AppCompatActivity {
         return angleXDegrees;
     }
 
+    public void ready(View v) {
+        if (readyTakeButton.getText().toString().equalsIgnoreCase("Ready")) {
+            // reset horizontal axis to 0 degrees facing the object
+            horizontalAngleStart = Math.toDegrees(sideOrientation[0]);
+            frontAngleValue.setVisibility(View.VISIBLE);
+            // Certain components needs to be disabled during the measuring process
+            onGroundSwitch.setEnabled(false);
+            calibrateCameraHeight.setEnabled(false);
+            dimension1Select.setEnabled(false);
+            dimension2Select.setEnabled(false);
+
+            readyTakeButton.setText("Take");
+            instructionMessage.setTextColor(Color.GREEN);
+            if (!onGroundSwitch.isChecked()) {
+                instructionMessage.setText("Tilt your phone frontwards/downwards. Point the dot at the ground and tap it or press take.");
+            } else {
+                instructionMessage.setText("Tilt your phone frontwards/downwards. Point the dot at the bottom of the object and tap it or press take.");
+            }
+        } else if (readyTakeButton.getText().toString().equalsIgnoreCase("Take")) {
+            getAngles();
+        }
+
+    }
+
+
     /**
      * Takes measurements for all the necessary angles required.
-     * @param v
      */
-    public void takeAngles(View v) {
-        // Certain components needs to be disabled during the measuring process
-        onGroundSwitch.setEnabled(false);
-        calibrateCameraHeight.setEnabled(false);
-        dimension1Select.setEnabled(false);
-        dimension2Select.setEnabled(false);
-
+    public void getAngles() {
         if (!onGroundSwitch.isChecked() && groundAngle == 0) {
             groundAngle = sortXAngle(frontOrientation[1]);
             centrePoint.setColorFilter(Color.BLUE);
@@ -409,7 +429,6 @@ public class MainActivity extends AppCompatActivity {
             // Prepares for measuring the horizontal axis to get object width.
             frontAngleValue.setVisibility(View.INVISIBLE);
             sideAngleValue.setVisibility(View.VISIBLE);
-            horizontalAngleStart = Math.toDegrees(sideOrientation[0]);
         } else if (leftObAngle == 0) {
             leftObAngle = sortYAngle(Math.toDegrees(sideOrientation[0]) - horizontalAngleStart);
             centrePoint.setColorFilter(Color.MAGENTA);
@@ -419,7 +438,7 @@ public class MainActivity extends AppCompatActivity {
             rightObAngle = sortYAngle(Math.toDegrees(sideOrientation[0]) - horizontalAngleStart);
             centrePoint.setVisibility(View.INVISIBLE);
             instructionMessage.setTextColor(Color.WHITE);
-            instructionMessage.setText("Save your image results or reset your measurements or press take.");
+            instructionMessage.setText("Press use to show the measurements or reset to retake.");
 
             // calibrate values. Left angle should always be greater than right angle
             double temp = leftObAngle;
@@ -433,7 +452,7 @@ public class MainActivity extends AppCompatActivity {
             centrePoint.clearColorFilter();
             sideAngleValue.setVisibility(View.INVISIBLE);
             useButton.setEnabled(true);
-            takeButton.setEnabled(false);
+            readyTakeButton.setEnabled(false);
         }
     }
 
