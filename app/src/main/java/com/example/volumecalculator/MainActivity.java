@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private double botObAngle, topObAngle, groundAngle, leftObAngle, rightObAngle,
             objectWidth, objectHeight, objectDistance, objectGroundHeight,
             cameraHeightFromGround,
-            horizontalAngleStart;
+            extraAngle;
 
     // Declaration of components required to calculate the device's orientation
     private float[] geomagnetic, gravity;
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         groundAngle = 0;
         leftObAngle = 0;
         rightObAngle = 0;
-        horizontalAngleStart = 0;
+        extraAngle = 0;
         cameraHeightFromGround = 162 / 100;
 
         // Initialise camera components
@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
         objectHeight = 0;
         objectDistance = 0;
         objectWidth = 0;
-        horizontalAngleStart = 0;
+        extraAngle = 0;
 
         // Only resets the currently selected dimension
         if (dimension1Select.isChecked()) {
@@ -313,45 +313,38 @@ public class MainActivity extends AppCompatActivity {
 
             // Displays the value of the device's orientation in both axis (Visibility depends on the current stage of the measuring process)
             frontAngleValue.setText("Front Angle:\n" + String.format("%.0f",sortXAngle(frontOrientation[1])) + "°");
-            sideAngleValue.setText("Side Angle:\n" + String.format("%.0f", sortYAngle(Math.toDegrees(sideOrientation[0]) - horizontalAngleStart))+ "°"
+            sideAngleValue.setText("Side Angle:\n" + String.format("%.0f", sortYAngle(sideOrientation[0])) + "°"
             + "\n" + String.format("%.0f", Math.toDegrees(sideOrientation[0]))
-            + "\n" + String.format("%.0f", horizontalAngleStart));
+            + "\n" + String.format("%.0f", Math.toDegrees(extraAngle)));
         }
     }
 
     /**
      * Calibrates horizontal axis angle value to return a valid measurement.
-     * @param angleYDegrees
      * @return
      */
-    public double sortYAngle(double angleYDegrees) {
+    public double sortYAngle(double angleYRadians) {
         // Ensures y degree angle returns a valid angle.
-        if (horizontalAngleStart == 0 || (horizontalAngleStart >= 0 && angleYDegrees >= 0) || (horizontalAngleStart < 0 && angleYDegrees < 0)) {
-            return angleYDegrees;
-        } else {
-            if (horizontalAngleStart >= 0) {
-                if ((Math.toDegrees(sideOrientation[0]) > 0) && (Math.toDegrees(sideOrientation[0]) < horizontalAngleStart)) {
-                    return angleYDegrees;
-                } else {
-                    if (Math.abs(angleYDegrees) >= Math.abs(360 + angleYDegrees)) {
-                        return 360 + angleYDegrees;
-                    } else {
-                        return angleYDegrees;
-                    }
+        double calibratedAngle = angleYRadians - extraAngle;
+        double extraAnglePos = (2 * Math.PI) + calibratedAngle;
+        double extraAngleNeg = ((2 * Math.PI) - calibratedAngle) * -1;
+        if (!(extraAngle == 0 || (extraAngle >= 0 && calibratedAngle >= 0) || (extraAngle < 0 && calibratedAngle < 0))) {
+            if (extraAngle >= 0) {
+                if (!((angleYRadians > 0) && (angleYRadians < extraAngle))) {
+                    if (Math.abs(calibratedAngle) >= Math.abs(extraAnglePos)) {
+                        return Math.toDegrees(extraAnglePos);
+                    } 
                 }
             } else {
-                if ((Math.toDegrees(sideOrientation[0]) < 0) && (Math.toDegrees(sideOrientation[0]) > horizontalAngleStart)) {
-                    return angleYDegrees;
-                } else {
-                    //abs(angleYDegrees >= abs360-angleYDegrees)
-                    if (Math.abs(angleYDegrees) >= Math.abs(360 - angleYDegrees)) {
-                        return (360 - angleYDegrees) * -1;
-                    } else {
-                        return angleYDegrees;
+                if (!((angleYRadians < 0) && (angleYRadians > extraAngle))) {
+                    if (Math.abs(calibratedAngle) >= Math.abs(extraAngleNeg)) {
+                        return Math.toDegrees(extraAngleNeg);
                     }
                 }
             }
         }
+
+        return Math.toDegrees(calibratedAngle);
     }
 
     /**
@@ -375,7 +368,7 @@ public class MainActivity extends AppCompatActivity {
     public void ready(View v) {
         if (readyTakeButton.getText().toString().equalsIgnoreCase("Ready")) {
             // reset horizontal axis to 0 degrees facing the object
-            horizontalAngleStart = Math.toDegrees(sideOrientation[0]);
+            extraAngle = sideOrientation[0];
             frontAngleValue.setVisibility(View.VISIBLE);
             // Certain components needs to be disabled during the measuring process
             onGroundSwitch.setEnabled(false);
@@ -430,12 +423,12 @@ public class MainActivity extends AppCompatActivity {
             frontAngleValue.setVisibility(View.INVISIBLE);
             sideAngleValue.setVisibility(View.VISIBLE);
         } else if (leftObAngle == 0) {
-            leftObAngle = sortYAngle(Math.toDegrees(sideOrientation[0]) - horizontalAngleStart);
+            leftObAngle = sortYAngle(sideOrientation[0]);
             centrePoint.setColorFilter(Color.MAGENTA);
             instructionMessage.setTextColor(Color.MAGENTA);
             instructionMessage.setText("Tilt your phone sideways. Point the dot on the right side of the object and tap it or press take.");
         } else if (rightObAngle == 0) {
-            rightObAngle = sortYAngle(Math.toDegrees(sideOrientation[0]) - horizontalAngleStart);
+            rightObAngle = sortYAngle(sideOrientation[0]);
             centrePoint.setVisibility(View.INVISIBLE);
             instructionMessage.setTextColor(Color.WHITE);
             instructionMessage.setText("Press use to show the measurements or reset to retake.");
