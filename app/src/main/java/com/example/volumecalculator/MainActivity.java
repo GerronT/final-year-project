@@ -455,13 +455,13 @@ public class MainActivity extends AppCompatActivity {
             centrePoint.setVisibility(View.INVISIBLE);
             instructionMessage.setTextColor(Color.WHITE);
             instructionMessage.setText("Press use to show the measurements or reset to retake.");
-            // calibrate values. Left angle should always be greater than right angle. At the end, vector doesn't have any importance
-            double temp = leftObAngle;
-            if (leftObAngle < rightObAngle) {
-                leftObAngle = rightObAngle;
-                rightObAngle = temp;
+            // Left and Right object angles must have different vectors
+            if ((leftObAngle >= 0 && rightObAngle >= 0) || (leftObAngle < 0 && rightObAngle <0)) {
+                logReport.setText("Unexpected Side Angle Values");
             }
+            // Perform calculation to measure object width
             objectWidth = measureObjectWidth(leftObAngle, rightObAngle, objectDistance);
+
             // Sets certain component's function availability correspondingly
             centrePoint.clearColorFilter();
             sideAngleValue.setVisibility(View.INVISIBLE);
