@@ -179,6 +179,37 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Reinitialies certain components
+     */
+    private void reinitialiseComponents() {
+        groundAngle = 0;
+        botObAngle = 0;
+        topObAngle = 0;
+        rightObAngle = 0;
+        leftObAngle = 0;
+        objectGroundHeight = 0;
+        objectDistance = 0;
+        objectWidth = 0;
+        objectHeight = 0;
+        extraAngle = 0;
+
+        dimension1Select.setEnabled(true);
+        dimension2Select.setEnabled(true);
+        readyTakeButton.setText(R.string.rdyLbl);
+        readyTakeButton.setEnabled(true);
+        onGroundSwitch.setEnabled(true);
+        calibrateCameraHeight.setEnabled(true);
+
+        useButton.setEnabled(false);
+        centrePoint.clearColorFilter();
+        centrePoint.setVisibility(View.VISIBLE);
+        instructionMessage.setTextColor(Color.WHITE);
+        frontAngleValue.setVisibility(View.VISIBLE);
+        sideAngleValue.setVisibility(View.INVISIBLE);
+        instructionMessage.setText(R.string.readyMsg);
+    }
+
+    /**
      * Resets the measuring process and the selected dimension.
      */
     public void reset(View view) {
@@ -217,24 +248,114 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Saves an image copy of the measurements taken in the device's local storage.
+     * Gets the application ready to take angle measurements
      */
-    public void save(View v) {
-        resultScreenshot.setDrawingCacheEnabled(true);
-        resultScreenshot.buildDrawingCache();
-        Bitmap screenImage = resultScreenshot.getDrawingCache();
+    public void ready(View v) {
+        if (readyTakeButton.getText().toString().equalsIgnoreCase(getString(R.string.rdyLbl))) {
+            // reset horizontal axis to 0 degrees facing the object
+            extraAngle = sideOrientation[0];
+            // Certain components needs to be disabled during the measuring process
+            onGroundSwitch.setEnabled(false);
+            calibrateCameraHeight.setEnabled(false);
+            dimension1Select.setEnabled(false);
+            dimension2Select.setEnabled(false);
 
-        //String savedImageURL =
-        MediaStore.Images.Media.insertImage(
-                getContentResolver(),
-                screenImage,
-                getString(R.string.saveTitle),
-                getString(R.string.saveDesc)
-        );
+            readyTakeButton.setText(R.string.tkeLbl);
+            instructionMessage.setTextColor(Color.GREEN);
+            if (!onGroundSwitch.isChecked()) {
+                instructionMessage.setText(R.string.getGrndAMsg);
+            } else {
+                instructionMessage.setText(R.string.getBotObjAMsg);
+            }
+        } else if (readyTakeButton.getText().toString().equalsIgnoreCase(getString(R.string.tkeLbl))) {
+            getAngles();
+        }
+    }
 
-        // Parse the gallery image url to uri
-        // Uri savedImageURI = Uri.parse(savedImageURL);
-        logReport.setText(R.string.saveMsg);
+    /**
+     * Takes measurements for all the necessary angles required.
+     */
+    public void getAngles() {
+        if (!onGroundSwitch.isChecked() && groundAngle == 0) {
+            groundAngle = sortXAngle(frontOrientation[1], RR[8]);
+            centrePoint.setColorFilter(Color.BLUE);
+            instructionMessage.setTextColor(Color.BLUE);
+            instructionMessage.setText(R.string.getBotObjAMsg);
+        } else if (botObAngle == 0) {
+            botObAngle = sortXAngle(frontOrientation[1], RR[8]);
+            centrePoint.setColorFilter(Color.RED);
+            instructionMessage.setTextColor(Color.RED);
+            instructionMessage.setText(R.string.getTopObjAMsg);
+        } else if (topObAngle == 0) {
+            topObAngle = sortXAngle(frontOrientation[1], RR[8]);
+            centrePoint.setColorFilter(Color.YELLOW);
+            instructionMessage.setTextColor(Color.YELLOW);
+            instructionMessage.setText(R.string.getLeftObjAMsg);
+
+            // Calibrate Angle Values. Also in charge of auto-sort function
+            double[] calibratedAngles;
+            if (onGroundSwitch.isChecked()) {
+                calibratedAngles = calibrateOnGroundAngleValues(botObAngle, topObAngle);
+            } else {
+                calibratedAngles = calibrateAboveGroundAngleValues(groundAngle, botObAngle, topObAngle);
+                groundAngle = calibratedAngles[2];
+            }
+
+            botObAngle = calibratedAngles[1];
+            topObAngle = calibratedAngles[0];
+
+            // Perform calculations to get dimension measurements. Contains the mathematical application surrounding trigonometry.
+            if (!onGroundSwitch.isChecked()) {
+                double[] distanceHeightAndGHeight = measureObjectAboveGround(cameraHeightFromGround, groundAngle, botObAngle, topObAngle);
+                if (distanceHeightAndGHeight[0] == 0 && distanceHeightAndGHeight[1] == 0 && distanceHeightAndGHeight[2] == 0) {
+                    logReport.setText(R.string.unxpctdGrndAMsg);
+                } else {
+                    objectDistance = distanceHeightAndGHeight[0];
+                    objectHeight = distanceHeightAndGHeight[1];
+                    objectGroundHeight = distanceHeightAndGHeight[2];
+                }
+            } else {
+                double[] distanceAndHeight = measureObjectOnGround(cameraHeightFromGround, botObAngle, topObAngle);
+                if (distanceAndHeight[0] == 0 && distanceAndHeight[1] == 0) {
+                    logReport.setText(R.string.unxpctdBotObjAMsg);
+                } else {
+                    objectDistance = distanceAndHeight[0];
+                    objectHeight = distanceAndHeight[1];
+                }
+            }
+            // Prepares for measuring the horizontal axis to get object width.
+            frontAngleValue.setVisibility(View.INVISIBLE);
+            sideAngleValue.setVisibility(View.VISIBLE);
+        } else if (leftObAngle == 0) {
+            leftObAngle = sortYAngle(sideOrientation[0], extraAngle);
+            centrePoint.setColorFilter(Color.MAGENTA);
+            instructionMessage.setTextColor(Color.MAGENTA);
+            instructionMessage.setText(R.string.getRightObjAMsg);
+        } else if (rightObAngle == 0) {
+            rightObAngle = sortYAngle(sideOrientation[0], extraAngle);
+            centrePoint.setVisibility(View.INVISIBLE);
+            instructionMessage.setTextColor(Color.WHITE);
+            instructionMessage.setText(R.string.useOrRstMsg);
+            // Left and Right object angles must have different vectors
+            if ((leftObAngle >= 0 && rightObAngle >= 0) || (leftObAngle < 0 && rightObAngle < 0)) {
+                logReport.setText(R.string.unxpctdSideAMsg);
+            }
+            // Perform calculation to measure object width
+            objectWidth = measureObjectWidth(leftObAngle, rightObAngle, objectDistance);
+
+            //store results in an array of double
+            if (dimension1Select.isChecked()) {
+                dimension1Results = new double[]{objectWidth, objectHeight, objectWidth * objectHeight, objectDistance, objectGroundHeight};
+            } else if (dimension2Select.isChecked()) {
+                dimension2Results = new double[]{objectWidth, objectHeight, objectWidth * objectHeight, objectDistance, objectGroundHeight};
+            }
+
+            // Sets certain component's function availability correspondingly
+            centrePoint.clearColorFilter();
+            sideAngleValue.setVisibility(View.INVISIBLE);
+            useButton.setEnabled(true);
+            readyTakeButton.setEnabled(false);
+        }
     }
 
     /**
@@ -275,33 +396,65 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void reinitialiseComponents() {
-        groundAngle = 0;
-        botObAngle = 0;
-        topObAngle = 0;
-        rightObAngle = 0;
-        leftObAngle = 0;
-        objectGroundHeight = 0;
-        objectDistance = 0;
-        objectWidth = 0;
-        objectHeight = 0;
-        extraAngle = 0;
+    /**
+     * Saves an image copy of the measurements taken in the device's local storage.
+     */
+    public void save(View v) {
+        resultScreenshot.setDrawingCacheEnabled(true);
+        resultScreenshot.buildDrawingCache();
+        Bitmap screenImage = resultScreenshot.getDrawingCache();
 
-        dimension1Select.setEnabled(true);
-        dimension2Select.setEnabled(true);
-        readyTakeButton.setText(R.string.rdyLbl);
-        readyTakeButton.setEnabled(true);
-        onGroundSwitch.setEnabled(true);
-        calibrateCameraHeight.setEnabled(true);
+        //String savedImageURL =
+        MediaStore.Images.Media.insertImage(
+                getContentResolver(),
+                screenImage,
+                getString(R.string.saveTitle),
+                getString(R.string.saveDesc)
+        );
 
-        useButton.setEnabled(false);
-        centrePoint.clearColorFilter();
-        centrePoint.setVisibility(View.VISIBLE);
-        instructionMessage.setTextColor(Color.WHITE);
-        frontAngleValue.setVisibility(View.VISIBLE);
-        sideAngleValue.setVisibility(View.INVISIBLE);
-        instructionMessage.setText(R.string.readyMsg);
+        // Parse the gallery image url to uri
+        // Uri savedImageURI = Uri.parse(savedImageURL);
+        logReport.setText(R.string.saveMsg);
     }
+
+
+    /**
+     * Responsible for taking snapshots of images.
+     */
+    Camera.PictureCallback mPictureCallback = new Camera.PictureCallback() {
+        @Override
+        public void onPictureTaken(byte[] data, Camera camera) {
+            Bitmap capturedImage = BitmapFactory.decodeByteArray(data, 0, data.length);
+            if (dimension1Select.isChecked()) {
+                dimension1Thumb.setImageBitmap(capturedImage);
+                dimension2Select.setChecked(true);
+            } else if (dimension2Select.isChecked()) {
+                dimension2Thumb.setImageBitmap(capturedImage);
+                dimension1Select.setChecked(true);
+            }
+        }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        accelerometer.register();
+        magneticSensor.register();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        accelerometer.unregister();
+        magneticSensor.unregister();
+    }
+
+    /**-----------------------
+     *
+     * BACKEND-IMPLEMENTATION
+     *
+     *-----------------------/
+
 
     /**
      * Updates orientation values consistently upon any change in values in either sensors.
@@ -317,15 +470,15 @@ public class MainActivity extends AppCompatActivity {
             SensorManager.getOrientation(SR, sideOrientation);
 
             // Displays the value of the device's orientation in both axis (Visibility depends on the current stage of the measuring process)
-            frontAngleValue.setText(getString(R.string.frntAngleLbl, String.format(Locale.getDefault(), "%.1f", sortXAngle(frontOrientation[1]))));
-            sideAngleValue.setText(getString(R.string.sideAngleLbl, String.format(Locale.getDefault(), "%.1f", sortXAngle(sideOrientation[0]))));
+            frontAngleValue.setText(getString(R.string.frntAngleLbl, String.format(Locale.getDefault(), "%.1f", sortXAngle(frontOrientation[1], RR[8]))));
+            sideAngleValue.setText(getString(R.string.sideAngleLbl, String.format(Locale.getDefault(), "%.1f", sortYAngle(sideOrientation[0], extraAngle))));
         }
     }
 
     /**
      * Calibrates horizontal axis angle value to return a valid measurement.
      */
-    public double sortYAngle(double angleYRadians) {
+    public double sortYAngle(double angleYRadians, double extraAngle) {
         // Ensures y degree angle returns a valid angle.
         double calibratedAngle = angleYRadians - extraAngle;
         double extraAnglePos = (2 * Math.PI) + calibratedAngle;
@@ -351,7 +504,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Calibrates vertical axis angle values to return a valid measurement.
      */
-    public double sortXAngle(double angleXRadians) {
+    public double sortXAngle(double angleXRadians, float rotationMatrix) {
         // x degree starts at -90. Make it start at 0
         double calibratedAngle = angleXRadians % (2 * Math.PI) + (Math.PI / 2);
 
@@ -361,119 +514,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // device is tilted backwards if RR[8] value is positive
-        if (Math.toDegrees(RR[8]) < 0) {
+        if (Math.toDegrees(rotationMatrix) < 0) {
             calibratedAngle = -calibratedAngle;
         }
         return Math.toDegrees(calibratedAngle);
     }
 
-    public void ready(View v) {
-        if (readyTakeButton.getText().toString().equalsIgnoreCase(getString(R.string.rdyLbl))) {
-            // reset horizontal axis to 0 degrees facing the object
-            extraAngle = sideOrientation[0];
-            // Certain components needs to be disabled during the measuring process
-            onGroundSwitch.setEnabled(false);
-            calibrateCameraHeight.setEnabled(false);
-            dimension1Select.setEnabled(false);
-            dimension2Select.setEnabled(false);
-
-            readyTakeButton.setText(R.string.tkeLbl);
-            instructionMessage.setTextColor(Color.GREEN);
-            if (!onGroundSwitch.isChecked()) {
-                instructionMessage.setText(R.string.getGrndAMsg);
-            } else {
-                instructionMessage.setText(R.string.getBotObjAMsg);
-            }
-        } else if (readyTakeButton.getText().toString().equalsIgnoreCase(getString(R.string.tkeLbl))) {
-            getAngles();
-        }
-    }
-
-    /**
-     * Takes measurements for all the necessary angles required.
-     */
-    public void getAngles() {
-        if (!onGroundSwitch.isChecked() && groundAngle == 0) {
-            groundAngle = sortXAngle(frontOrientation[1]);
-            centrePoint.setColorFilter(Color.BLUE);
-            instructionMessage.setTextColor(Color.BLUE);
-            instructionMessage.setText(R.string.getBotObjAMsg);
-        } else if (botObAngle == 0) {
-            botObAngle = sortXAngle(frontOrientation[1]);
-            centrePoint.setColorFilter(Color.RED);
-            instructionMessage.setTextColor(Color.RED);
-            instructionMessage.setText(R.string.getTopObjAMsg);
-        } else if (topObAngle == 0) {
-            topObAngle = sortXAngle(frontOrientation[1]);
-            centrePoint.setColorFilter(Color.YELLOW);
-            instructionMessage.setTextColor(Color.YELLOW);
-            instructionMessage.setText(R.string.getLeftObjAMsg);
-
-            // Calibrate Angle Values. Also in charge of auto-sort function
-            double[] calibratedAngles;
-            if (onGroundSwitch.isChecked()) {
-                calibratedAngles = calibrateOnGroundAngleValues(botObAngle, topObAngle);
-            } else {
-                calibratedAngles = calibrateAboveGroundAngleValues(groundAngle, botObAngle, topObAngle);
-                groundAngle = calibratedAngles[2];
-            }
-
-            botObAngle = calibratedAngles[1];
-            topObAngle = calibratedAngles[0];
-
-            // Perform calculations to get dimension measurements. Contains the mathematical application surrounding trigonometry.
-            if (!onGroundSwitch.isChecked()) {
-                double[] distanceHeightAndGHeight = measureObjectAboveGround(cameraHeightFromGround, groundAngle, botObAngle, topObAngle);
-                if (distanceHeightAndGHeight[0] == 0 && distanceHeightAndGHeight[1] == 0 && distanceHeightAndGHeight[2] == 0) {
-                    logReport.setText(R.string.unxpctdGrndAMsg);
-                } else {
-                    objectDistance = distanceHeightAndGHeight[0];
-                    objectHeight = distanceHeightAndGHeight[1];
-                    objectGroundHeight = distanceHeightAndGHeight[2];
-                }
-            } else {
-                double[] distanceAndHeight = measureObjectOnGround(cameraHeightFromGround, botObAngle, topObAngle);
-                if (distanceAndHeight[0] == 0 && distanceAndHeight[1] == 0) {
-                    logReport.setText(R.string.unxpctdBotObjAMsg);
-                } else {
-                    objectDistance = distanceAndHeight[0];
-                    objectHeight = distanceAndHeight[1];
-                }
-            }
-            // Prepares for measuring the horizontal axis to get object width.
-            frontAngleValue.setVisibility(View.INVISIBLE);
-            sideAngleValue.setVisibility(View.VISIBLE);
-        } else if (leftObAngle == 0) {
-            leftObAngle = sortYAngle(sideOrientation[0]);
-            centrePoint.setColorFilter(Color.MAGENTA);
-            instructionMessage.setTextColor(Color.MAGENTA);
-            instructionMessage.setText(R.string.getRightObjAMsg);
-        } else if (rightObAngle == 0) {
-            rightObAngle = sortYAngle(sideOrientation[0]);
-            centrePoint.setVisibility(View.INVISIBLE);
-            instructionMessage.setTextColor(Color.WHITE);
-            instructionMessage.setText(R.string.useOrRstMsg);
-            // Left and Right object angles must have different vectors
-            if ((leftObAngle >= 0 && rightObAngle >= 0) || (leftObAngle < 0 && rightObAngle < 0)) {
-                logReport.setText(R.string.unxpctdSideAMsg);
-            }
-            // Perform calculation to measure object width
-            objectWidth = measureObjectWidth(leftObAngle, rightObAngle, objectDistance);
-
-            //store results in an array of double
-            if (dimension1Select.isChecked()) {
-                dimension1Results = new double[]{objectWidth, objectHeight, objectWidth * objectHeight, objectDistance, objectGroundHeight};
-            } else if (dimension2Select.isChecked()) {
-                dimension2Results = new double[]{objectWidth, objectHeight, objectWidth * objectHeight, objectDistance, objectGroundHeight};
-            }
-
-            // Sets certain component's function availability correspondingly
-            centrePoint.clearColorFilter();
-            sideAngleValue.setVisibility(View.INVISIBLE);
-            useButton.setEnabled(true);
-            readyTakeButton.setEnabled(false);
-        }
-    }
 
     /**
      * Performs the volume calculation based on the saved measurements.
@@ -589,36 +635,5 @@ public class MainActivity extends AppCompatActivity {
         // than 0. However, because of auto-sort, botObAngle will never be less than topObAngle
         // so this predicate shouldn't happen.
         return new double[]{calcDistance, calcHeight, calcGHeight};
-    }
-
-    /**
-     * Responsible for taking snapshots of images.
-     */
-    Camera.PictureCallback mPictureCallback = new Camera.PictureCallback() {
-        @Override
-        public void onPictureTaken(byte[] data, Camera camera) {
-            Bitmap capturedImage = BitmapFactory.decodeByteArray(data, 0, data.length);
-            if (dimension1Select.isChecked()) {
-                dimension1Thumb.setImageBitmap(capturedImage);
-                dimension2Select.setChecked(true);
-            } else if (dimension2Select.isChecked()) {
-                dimension2Thumb.setImageBitmap(capturedImage);
-                dimension1Select.setChecked(true);
-            }
-        }
-    };
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        accelerometer.register();
-        magneticSensor.register();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        accelerometer.unregister();
-        magneticSensor.unregister();
     }
 }
