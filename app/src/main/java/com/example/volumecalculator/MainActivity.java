@@ -367,23 +367,23 @@ public class MainActivity extends AppCompatActivity {
             // shows all the measurement results
             if (dimension1Select.isChecked()) {
                 dimension1Width.setText(getString(R.string.oneDfrmtr, getString(R.string.wdth), String.format(Locale.getDefault(), "%.2f", objectWidth)));
-                dimension1Height.setText(getString(R.string.oneDfrmtr, getString(R.string.wdth), String.format(Locale.getDefault(), "%.2f", objectHeight)));
+                dimension1Height.setText(getString(R.string.oneDfrmtr, getString(R.string.hght), String.format(Locale.getDefault(), "%.2f", objectHeight)));
                 dimension1Area.setText(getString(R.string.twoDfrmtr, getString(R.string.area), String.format(Locale.getDefault(), "%.2f", objectWidth * objectHeight)));
                 dimension1Distance.setText(getString(R.string.oneDfrmtr, getString(R.string.dist), String.format(Locale.getDefault(), "%.2f", objectDistance)));
                 if (objectGroundHeight > 0) {
                     dimension1GroundH.setText(getString(R.string.oneDfrmtr, getString(R.string.gHght), String.format(Locale.getDefault(), "%.2f", objectGroundHeight)));
                 } else {
-                    dimension1GroundH.setText(getString(R.string.oneDfrmtr, getString(R.string.gHght), "N/A"));
+                    dimension1GroundH.setText(getString(R.string.rstFrmtr2, getString(R.string.gHght), getString(R.string.notapplcble)));
                 }
             } else if (dimension2Select.isChecked()) {
                 dimension2Width.setText(getString(R.string.oneDfrmtr, getString(R.string.wdth), String.format(Locale.getDefault(), "%.2f", objectWidth)));
-                dimension2Height.setText(getString(R.string.oneDfrmtr, getString(R.string.wdth), String.format(Locale.getDefault(), "%.2f", objectHeight)));
+                dimension2Height.setText(getString(R.string.oneDfrmtr, getString(R.string.hght), String.format(Locale.getDefault(), "%.2f", objectHeight)));
                 dimension2Area.setText(getString(R.string.twoDfrmtr, getString(R.string.area), String.format(Locale.getDefault(), "%.2f", objectWidth * objectHeight)));
                 dimension2Distance.setText(getString(R.string.oneDfrmtr, getString(R.string.dist), String.format(Locale.getDefault(), "%.2f", objectDistance)));
                 if (objectGroundHeight > 0) {
                     dimension2GroundH.setText(getString(R.string.oneDfrmtr, getString(R.string.gHght), String.format(Locale.getDefault(), "%.2f", objectGroundHeight)));
                 } else {
-                    dimension2GroundH.setText(getString(R.string.oneDfrmtr, getString(R.string.gHght), "N/A"));
+                    dimension2GroundH.setText(getString(R.string.rstFrmtr2, getString(R.string.gHght), getString(R.string.notapplcble)));
                 }
             }
             // Enables calculate volume button if both dimension measurements exists
@@ -415,6 +415,25 @@ public class MainActivity extends AppCompatActivity {
         // Parse the gallery image url to uri
         // Uri savedImageURI = Uri.parse(savedImageURL);
         logReport.setText(R.string.saveMsg);
+    }
+
+    /**
+     * Updates orientation values consistently upon any change in values in either sensors.
+     */
+    private void updateOrientation() {
+        if (geomagnetic != null && gravity != null) {
+            // Uses values from both accelerometer and magnetometer to retrieve orientation measurements for the vertical axis
+            SensorManager.getRotationMatrix(RR, null, gravity, geomagnetic);
+            SensorManager.getOrientation(RR, frontOrientation);
+
+            // Flips the Rotation Matrix's first two column to get orientation measurements for the horizontal axis
+            float[] SR = new float[]{RR[1], RR[0], RR[2], RR[4], RR[3], RR[5], RR[7], RR[6], RR[8]};
+            SensorManager.getOrientation(SR, sideOrientation);
+
+            // Displays the value of the device's orientation in both axis (Visibility depends on the current stage of the measuring process)
+            frontAngleValue.setText(getString(R.string.frntAngleLbl, String.format(Locale.getDefault(), "%.1f", sortXAngle(frontOrientation[1], RR[8]))));
+            sideAngleValue.setText(getString(R.string.sideAngleLbl, String.format(Locale.getDefault(), "%.1f", sortYAngle(sideOrientation[0], extraAngle))));
+        }
     }
 
 
@@ -454,26 +473,6 @@ public class MainActivity extends AppCompatActivity {
      * BACKEND-IMPLEMENTATION
      *
      *-----------------------/
-
-
-    /**
-     * Updates orientation values consistently upon any change in values in either sensors.
-     */
-    private void updateOrientation() {
-        if (geomagnetic != null && gravity != null) {
-            // Uses values from both accelerometer and magnetometer to retrieve orientation measurements for the vertical axis
-            SensorManager.getRotationMatrix(RR, null, gravity, geomagnetic);
-            SensorManager.getOrientation(RR, frontOrientation);
-
-            // Flips the Rotation Matrix's first two column to get orientation measurements for the horizontal axis
-            float[] SR = new float[]{RR[1], RR[0], RR[2], RR[4], RR[3], RR[5], RR[7], RR[6], RR[8]};
-            SensorManager.getOrientation(SR, sideOrientation);
-
-            // Displays the value of the device's orientation in both axis (Visibility depends on the current stage of the measuring process)
-            frontAngleValue.setText(getString(R.string.frntAngleLbl, String.format(Locale.getDefault(), "%.1f", sortXAngle(frontOrientation[1], RR[8]))));
-            sideAngleValue.setText(getString(R.string.sideAngleLbl, String.format(Locale.getDefault(), "%.1f", sortYAngle(sideOrientation[0], extraAngle))));
-        }
-    }
 
     /**
      * Calibrates horizontal axis angle value to return a valid measurement.
