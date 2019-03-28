@@ -353,17 +353,18 @@ public class MainActivity extends AppCompatActivity {
      */
     public double sortXAngle(double angleXRadians) {
         // x degree starts at -90. Make it start at 0
-        double angleXDegrees = Math.toDegrees(angleXRadians) % 360 + 90;
+        double calibratedAngle = angleXRadians % (2 * Math.PI) + (Math.PI / 2);
 
         // Caps the angle taken within the range of -90 to 90
-        if (angleXDegrees > 90) {
-            angleXDegrees = 180 - angleXDegrees;
+        if (calibratedAngle > Math.PI / 2) {
+            calibratedAngle = Math.PI - calibratedAngle;
         }
+
         // device is tilted backwards if RR[8] value is positive
         if (Math.toDegrees(RR[8]) < 0) {
-            angleXDegrees = -angleXDegrees;
+            calibratedAngle = -calibratedAngle;
         }
-        return angleXDegrees;
+        return Math.toDegrees(calibratedAngle);
     }
 
     public void ready(View v) {
