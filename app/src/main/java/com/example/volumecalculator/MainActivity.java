@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
 
         calibrateCameraHeight = findViewById(R.id.grndHSB);
         calibrateCameraHeight.setMax(300);
-        calibrateCameraHeight.setProgress(162);
+        calibrateCameraHeight.setProgress(147);
         cameraHeightValue = findViewById(R.id.grndHLbl);
         onGroundSwitch = findViewById(R.id.onGrndSwtch);
         centrePoint = findViewById(R.id.objRef);
@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
         sideAngleValue.setVisibility(View.INVISIBLE);
         logReport = findViewById(R.id.logTxt);
         instructionMessage = findViewById(R.id.insMsg);
+        instructionMessage.setTextColor(Color.WHITE);
         instructionMessage.setText(R.string.readyMsg);
         resultScreenshot = findViewById(R.id.scrnShotView);
 
@@ -110,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         leftObAngle = 0;
         rightObAngle = 0;
         extraAngle = 0;
-        cameraHeightFromGround = 162 / 100D;
+        cameraHeightFromGround = 147 / 100D;
 
         // Initialise camera components
         FrameLayout cameraViewFrame = findViewById(R.id.camView);
@@ -278,19 +279,13 @@ public class MainActivity extends AppCompatActivity {
     public void getAngles() {
         if (!onGroundSwitch.isChecked() && groundAngle == 0) {
             groundAngle = sortXAngle(frontOrientation[1], RR[8]);
-            centrePoint.setColorFilter(Color.BLUE);
-            instructionMessage.setTextColor(Color.BLUE);
-            instructionMessage.setText(R.string.getBotObjAMsg);
+            setAngle(Color.BLUE, R.string.getBotObjAMsg);
         } else if (botObAngle == 0) {
             botObAngle = sortXAngle(frontOrientation[1], RR[8]);
-            centrePoint.setColorFilter(Color.RED);
-            instructionMessage.setTextColor(Color.RED);
-            instructionMessage.setText(R.string.getTopObjAMsg);
+            setAngle(Color.RED, R.string.getTopObjAMsg);
         } else if (topObAngle == 0) {
             topObAngle = sortXAngle(frontOrientation[1], RR[8]);
-            centrePoint.setColorFilter(Color.YELLOW);
-            instructionMessage.setTextColor(Color.YELLOW);
-            instructionMessage.setText(R.string.getLeftObjAMsg);
+            setAngle(Color.YELLOW, R.string.getLeftObjAMsg);
 
             // Calibrate Angle Values. Also in charge of auto-sort function
             double[] calibratedAngles;
@@ -328,14 +323,12 @@ public class MainActivity extends AppCompatActivity {
             sideAngleValue.setVisibility(View.VISIBLE);
         } else if (leftObAngle == 0) {
             leftObAngle = sortYAngle(sideOrientation[0], extraAngle);
-            centrePoint.setColorFilter(Color.MAGENTA);
-            instructionMessage.setTextColor(Color.MAGENTA);
-            instructionMessage.setText(R.string.getRightObjAMsg);
+            setAngle(Color.MAGENTA, R.string.getRightObjAMsg);
         } else if (rightObAngle == 0) {
             rightObAngle = sortYAngle(sideOrientation[0], extraAngle);
+            setAngle(Color.WHITE, R.string.useOrRstMsg);
+
             centrePoint.setVisibility(View.INVISIBLE);
-            instructionMessage.setTextColor(Color.WHITE);
-            instructionMessage.setText(R.string.useOrRstMsg);
             // Left and Right object angles must have different vectors
             if ((leftObAngle >= 0 && rightObAngle >= 0) || (leftObAngle < 0 && rightObAngle < 0)) {
                 logReport.setText(R.string.unxpctdSideAMsg);
@@ -356,6 +349,12 @@ public class MainActivity extends AppCompatActivity {
             useButton.setEnabled(true);
             readyTakeButton.setEnabled(false);
         }
+    }
+
+    private void setAngle(int color, int insMsg) {
+        centrePoint.setColorFilter(color);
+        instructionMessage.setTextColor(color);
+        instructionMessage.setText(insMsg);
     }
 
     /**

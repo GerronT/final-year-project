@@ -272,7 +272,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginBottom="108dp"
-        android:text="H = 1.62m"
+        android:text="H = 1.47m"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
